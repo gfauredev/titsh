@@ -52,7 +52,7 @@ _Item_ files include **scripts** in **lightweight scripting** languages that can
 customize their _Presentation_ and _Evaluation_.
 
 Currently, **Titsh** supports [Markdown](https://commonmark.org) (parsed by
-[pulldown-cmark]) markup and embedded [Rhai] scripts.
+[pulldown-cmark]) markup embedding [Rhai] scripts.
 
 ### Item Presentation
 
@@ -208,36 +208,34 @@ thresholds: [5s, 25s, 90s] # Base thresholds triggering Good, Hard and Timeout
 
 ### Simple & Lightweight Internal Database
 
-| _Item_ field     | Type               | Description                                       |
-| ---------------- | ------------------ | ------------------------------------------------- |
-| `id` Primary Key | `INTEGER`          | Technical unique identifier of the _Item_         |
-| `url`            | `TEXT NOT NULL`    | File path or HTTP(S) URL of the _Item_            |
-| `parameters`     | `JSON`             | Parameters for parametric _Items_                 |
-| `tags`           | `JSON NOT NULL`    | (JSON) Array of _Tags_ associated with the _Item_ |
-| `stability`      | `REAL NOT NULL`    | (FSRS) stability metric                           |
-| `difficulty`     | `REAL NOT NULL`    | (FSRS) difficulty metric                          |
-| `elapsed_days`   | `INTEGER NOT NULL` | Days since last review                            |
-| `scheduled_days` | `INTEGER NOT NULL` | Days until next scheduled review                  |
-| `reps`           | `INTEGER NOT NULL` | Number of repetitions                             |
-| `lapses`         | `INTEGER NOT NULL` | Number of lapses                                  |
-| `state`          | `INTEGER NOT NULL` | Learning state, 0-3: New, Learn, Review, Relearn  |
-| `review`         | `DATETIME`         | Date (and time) of the last _Item’s_ review       |
-| `creation`       | `DATETIME`         | Date (and time) of the _Item’s_ creation          |
+| _Item_ field     | Type               | Description                                      |
+| ---------------- | ------------------ | ------------------------------------------------ |
+| Key : `id`       | `INTEGER`          | Technical unique identifier of the _Item_        |
+| `url`            | `TEXT NOT NULL`    | File path or HTTP(S) URL of the _Item_           |
+| `parameters`     | `JSON`             | Parameters for parametric _Items_                |
+| `stability`      | `REAL NOT NULL`    | (FSRS) stability metric                          |
+| `difficulty`     | `REAL NOT NULL`    | (FSRS) difficulty metric                         |
+| `elapsed_days`   | `INTEGER NOT NULL` | Days since last review                           |
+| `scheduled_days` | `INTEGER NOT NULL` | Days until next scheduled review                 |
+| `reps`           | `INTEGER NOT NULL` | Number of repetitions                            |
+| `lapses`         | `INTEGER NOT NULL` | Number of lapses                                 |
+| `state`          | `INTEGER NOT NULL` | Learning state, 0-3: New, Learn, Review, Relearn |
+| `review`         | `DATETIME`         | Date (and time) of the last _Item’s_ review      |
+| `creation`       | `DATETIME`         | Date (and time) of the _Item’s_ creation         |
 
-| _Tag_ field      | Type                    | Description                                 |
-| ---------------- | ----------------------- | ------------------------------------------- |
-| `id` Primary Key | `INTEGER`               | Technical unique identifier of the _Tag_    |
-| `name`           | `TEXT NOT NULL`         | Name of the _Tag_                           |
-| `parent`         | `INTEGER`               | ID of the parent _Tag_, null if root        |
-| `retention`      | `500 < INTEGER <= 1000` | Desired retention factor on 1000            |
-| `weights`        | `JSON`                  | (FSRS) 'w' array (e.g., [0.4, 0.6, 2.4, …]) |
+| _Tag_ field | Type                    | Description                                 |
+| ----------- | ----------------------- | ------------------------------------------- |
+| Key : `id`  | `INTEGER`               | Technical unique identifier of the _Tag_    |
+| `name`      | `TEXT NOT NULL`         | Name of the _Tag_                           |
+| `parent`    | `INTEGER`               | ID of the parent _Tag_, null if root        |
+| `retention` | `500 < INTEGER <= 1000` | Desired retention factor on 1000            |
+| `weights`   | `JSON`                  | (FSRS) 'w' array (e.g., [0.4, 0.6, 2.4, …]) |
 
 ```sqlite
 CREATE TABLE item(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   url TEXT NOT NULL,  -- file://… or http://… or https://…
   parameters JSON,    -- JSON attribute set of parametric items’ parameters
-  tags JSON NOT NULL, -- JSON array of (slash hierarchized) item’s tags
   stability REAL NOT NULL DEFAULT 0,         -- FSRS
   difficulty REAL NOT NULL DEFAULT 0,        -- FSRS
   elapsed_days INTEGER NOT NULL DEFAULT 0,   -- FSRS
@@ -247,7 +245,7 @@ CREATE TABLE item(
   state INTEGER NOT NULL DEFAULT 0, -- 0: New, 1: Learn, 2: Review, 3: Relearn
   review DATETIME,                             -- Last review date
   creation DATETIME DEFAULT CURRENT_TIMESTAMP, -- Initial creation date
-  UNIQUE(url, parameters, tags)
+  UNIQUE(url, parameters)
 );
 
 CREATE TABLE tag(
@@ -256,7 +254,7 @@ CREATE TABLE tag(
   parent INTEGER, -- ID of the parent tag, null if root tag
   retention INTEGER CHECK (retention > 500 AND retention <= 1000), -- /1000
   weights JSON, -- FSRS 'w' array (e.g., [0.4, 0.6, 2.4, ...])
-  FOREIGN KEY (parent) REFERENCES tags(id) ON DELETE CASCADE,
+  FOREIGN KEY (parent) REFERENCES tag(id) ON DELETE CASCADE,
   UNIQUE(name, parent) -- Prevents duplicate children under the same parent
 );
 
@@ -270,8 +268,7 @@ CREATE TABLE item_tags(
 ```
 
 The database only stores _Tags_ created or modified by the _user_ in their own
-`tag` row. _Tags_ predefined in _Items_ files are just added to the _Item’s_
-`tags` array for uniqueness.
+`tag` row, not _Tags_ predefined in _Items_ files.
 
 [Rust]: https://rust-lang.org
 [Dioxus]: https://dioxuslabs.com
