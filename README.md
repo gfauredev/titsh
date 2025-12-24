@@ -20,7 +20,7 @@ lang: en-GB
 <!--toc:end-->
 
 **Titsh** is a cross-platform app _teaching_ atomic **skills** or units of
-**knowledge** (_Items_) **efficiently**, while _tracking_ their
+**knowledge** (_items_) **efficiently**, while _tracking_ their
 [long term](https://en.wikipedia.org/wiki/Long-term_memory) **retention**.
 
 **Titsh** tries to implement
@@ -36,7 +36,7 @@ UIs, tailored [user input](https://en.wikipedia.org/wiki/Testing_effect) and
 [evaluation](https://en.wikipedia.org/wiki/Desirable_difficulty).
 
 [Recall](https://en.wikipedia.org/wiki/Recall_(memory)) is sped up by
-[linking](https://en.wikipedia.org/wiki/Integrative_learning) _Items_ to
+[linking](https://en.wikipedia.org/wiki/Integrative_learning) _items_ to
 prerequisite, complementary or related ones.
 
 # Flexible & Powerful Items
@@ -46,22 +46,22 @@ files**, editable by any text editor, easily shared and version controlled. They
 can also be bundled with _resources_ (e.g. images, data…).
 
 _Item_ files include **scripts** in **lightweight scripting** languages that can
-customize their _Presentation_ and _Evaluation_.
+customize their _presentation_ and _evaluation_.
 
 Currently, **Titsh** supports [Markdown](https://commonmark.org) (parsed by
-[pulldown-cmark]) markup embedding [Rhai] scripts.
+[pulldown-cmark]) markup with embedded [Rhai] scripts.
 
 ## Item Presentation
 
-In **Titsh**, an _Item’s_ _Presentation_ is more than static content ; it adds
+In **Titsh**, an _item’s_ _presentation_ is more than static content ; it adds
 **interactivity** and **dynamic elements** to optimize the learning. **Titsh**
-is not only a **memory** app, and _Presentation_ is responsible for handling the
+is not only a **memory** app, and _presentation_ is responsible for handling the
 _acquisition_ phase, making the user understand a concept never studied before.
 
-For example, an _Item_ about countries location can be _presented_ as an
+For example, an _item_ about countries location can be _presented_ as an
 interactive map where the _user_ has to click the correct “shape”. A “reverse”,
-**linked** _Item_ could highlight a country and ask the _user_ to select its
-name among some plausible ones. Or, an _Item_ about equations could display each
+**linked** _item_ could highlight a country and ask the _user_ to select its
+name among some plausible ones. Or, an _item_ about equations could display each
 side as a plate of a balance scale, with factors as weights.
 
 ## Item Answer Evaluation
@@ -71,18 +71,18 @@ side as a plate of a balance scale, with factors as weights.
 “Good” or “Easy” buttons.
 
 But **Titsh** prioritizes **active** and **performance-based** evaluation
-through custom _Evaluation_, working in pair with the _Presentation_.
+through custom _evaluation_, working in pair with the _presentation_.
 
-For example, the _Item_ about countries location could _Evaluate_ the _user_ :
+For example, the _item_ about countries location could _evaluate_ the _user_ :
 
-- Correct shape/name, Quickly (i.e. < 5s) → “Easy”
-- Correct shape/name, Moderately (i.e. < 25s) → “Good”
-- Correct shape/name, Slowly (i.e. > 25s) → “Hard”
-- Incorrect shape/name, or None after timeout (i.e. 90s) → “Again”
+- Correct shape/name, quickly (i.e. < 5s) → “Easy”
+- Correct shape/name, moderately (i.e. < 25s) → “Good”
+- Correct shape/name, slowly (i.e. > 25s) → “Hard”
+- Incorrect shape/name, or none after timeout (i.e. 90s) → “Again”
 
 ## Item Scheduling
 
-**Titsh** schedules _Item_ [just](https://en.wikipedia.org/wiki/Spacing_effect)
+**Titsh** schedules _item_ [just](https://en.wikipedia.org/wiki/Spacing_effect)
 before they are likely to be
 [forgotten](https://en.wikipedia.org/wiki/Forgetting_curve), to maximize
 **retention** while minimizing time spent _learning_, using the [FSRS] algorithm
@@ -90,47 +90,47 @@ before they are likely to be
 
 ## Parametric Items
 
-An _Item_ file normally represents a single atomic knowledge unit. **Titsh**
-also supports _Parametric Item_ files, which declares _variable fields_ to
+An _item_ file normally represents a single atomic knowledge unit. **Titsh**
+also supports _parametric item_ files, which declares _variable fields_ to
 generate several knowledge units that are similar but of which some parameters
-differ. In that case, each “virtual” _Item_ is _Tracked_ independently.
+differ. In that case, each “virtual” _item_ is _tracked_ independently.
 
-For example, instead of writing ~200 very similar _Items_ about countries
-location, one _Parametric Item_ file can be used to generate all the necessary
-_Items_ by variating its country name and “shape” _Parameters_.
+For example, instead of writing ~200 very similar _items_ about countries
+location, one _parametric item_ file can be used to generate all the necessary
+_items_ by variating its country name and “shape” _parameters_.
 
-Each _Parametric Item_ variant is identified by its path plus its parameters’
-values in **Titsh** internal SQLite database (via [sqlx]). _Parameter_ rows can
-be imported from supported data formats.
+Each _parametric item_ variant is identified by its path plus its parameters’
+values in **Titsh** internal SQLite database (via [sqlx]). _Parameters_ can be
+imported from files of supported data formats.
 
 ## Items Repositories & Sharing
 
-**Titsh** can use _Items_ from the local, on-disk _Items Repository_, or from
-remote HTTP _Repositories_ (provided their URL) while keeping them up-to-date.
+**Titsh** can use _items_ from the local, on-disk _items repository_, or from
+remote HTTP _repositories_ (provided their URL) while keeping them up-to-date.
 
-This allows to easily share _Items Repositories_ through a web or Git server.
-For now, it’s up to the user to find interesting and trustable _Items
-Repositories_; a ranking system to quickly find high-quality ones is planned.
+This allows to easily share _items repositories_ through a web or Git server.
+For now, it’s up to the user to find interesting and trustable _items
+repositories_; a ranking system to quickly find high-quality ones is planned.
 
 ## Tagging
 
-_Items_ are organized flexibly with _Tags_, not in rigid categories or folders.
-However, _Tags_ can be hierarchical (e.g. `math/algebra/linear/`), and **Titsh**
-generates _Item’s_ first _Tag(s)_ from its path (relative to the _Repository_).
+_Items_ are organized flexibly with _tags_, not in rigid categories or folders.
+However, _tags_ can be hierarchical (e.g. `math/algebra/linear/`), and **Titsh**
+generates _item’s_ first _tag(s)_ from its path (relative to the _repository_).
 
-The more _Tags_ different _Items_ share, the more **Titsh** see them as
-_Related_ (or Complementary). Therefore, **Titsh** can present them during
+The more _tags_ different _items_ share, the more **Titsh** see them as
+_related_ (or Complementary). Therefore, **Titsh** can present them during
 review sessions to reinforce learning.
 
-Extremely _Related_ _Items_ may be considered different ways of presenting the
+Extremely _related_ _items_ may be considered different ways of presenting the
 same knowledge, and the _scheduling_ logic might decide to mark such related
-_Items_ simultaneously as reviewed for the current session.
+_items_ simultaneously as reviewed for the current session.
 
 ## Required References
 
-_Items_ can reference other _Items_ or _Tags_ as _Required_ (or _Preliminary_).
-Should a _user_ forget (“Again”) an _Item_ two times in a row, **Titsh** will
-suggest _Pausing_ it while learning the direct requirements, and continue
+_Items_ can reference other _items_ or _tags_ as _required_ (or preliminary).
+Should a _user_ forget (“Again”) an _item_ two times in a row, **Titsh** will
+suggest _pausing_ it while learning the direct requirements, and continue
 _recursively_ if needed.
 
 **Titsh** encourages
@@ -147,10 +147,11 @@ may grow in future versions if really needed.
 
 - _Tracking_ entirely inside internal database
 - YAML or TOML front-matter
-- Identified only by their paths, relative to the single _Item Repository_
-- Marked as “Lost” if file or (_Parameters_) row not found / (re)moved
-  - _User_ can update “lost” _Items’_ path or row ID, or definitively remove
-  - Progress _Tracking_ data is never deleted without explicit _user_ action
+- Identified only by their paths, relative to the single _item repository_
+- Marked as “Lost” if file or _parameters_ not found / (re)moved
+  - _User_ can update “lost” _items’_ path or _parameters_, or definitively
+    remove
+  - Progress _tracking_ data is never deleted without explicit _user_ action
   - Prompt to relink or remove when it should be reviewed
 
 ```markdown
@@ -169,7 +170,7 @@ thresholds: [5s, 25s, 90s] # Base thresholds triggering Good, Hard and Timeout
 ## Isolated and stateless (lightweight) scripting environment
 
 - Restricted set of inputs
-  - Whether the _Item_ is reviewed or initially learned
+  - Whether the _item_ is reviewed or initially learned
   - _User_ mouse or touchscreen events, text input
   - Date and time
   - Eventual attribute set of parameters (if params is set, parametric _item_)
@@ -207,9 +208,9 @@ thresholds: [5s, 25s, 90s] # Base thresholds triggering Good, Hard and Timeout
 
 | _Item_ field     | Type               | Description                                      |
 | ---------------- | ------------------ | ------------------------------------------------ |
-| Key : `id`       | `INTEGER`          | Technical unique identifier of the _Item_        |
-| `url`            | `TEXT NOT NULL`    | File path or HTTP(S) URL of the _Item_           |
-| `parameters`     | `JSON`             | Parameters for parametric _Items_                |
+| Key : `id`       | `INTEGER`          | Technical unique identifier of the _item_        |
+| `url`            | `TEXT NOT NULL`    | File path or HTTP(S) URL of the _item_           |
+| `parameters`     | `JSON`             | Parameters for parametric _items_                |
 | `stability`      | `REAL NOT NULL`    | (FSRS) stability metric                          |
 | `difficulty`     | `REAL NOT NULL`    | (FSRS) difficulty metric                         |
 | `elapsed_days`   | `INTEGER NOT NULL` | Days since last review                           |
@@ -217,14 +218,14 @@ thresholds: [5s, 25s, 90s] # Base thresholds triggering Good, Hard and Timeout
 | `reps`           | `INTEGER NOT NULL` | Number of repetitions                            |
 | `lapses`         | `INTEGER NOT NULL` | Number of lapses                                 |
 | `state`          | `INTEGER NOT NULL` | Learning state, 0-3: New, Learn, Review, Relearn |
-| `review`         | `DATETIME`         | Date (and time) of the last _Item’s_ review      |
-| `creation`       | `DATETIME`         | Date (and time) of the _Item’s_ creation         |
+| `review`         | `DATETIME`         | Date (and time) of the last _item’s_ review      |
+| `creation`       | `DATETIME`         | Date (and time) of the _item’s_ creation         |
 
 | _Tag_ field | Type            | Description                                 |
 | ----------- | --------------- | ------------------------------------------- |
-| Key : `id`  | `INTEGER`       | Technical unique identifier of the _Tag_    |
-| `name`      | `TEXT NOT NULL` | Name of the _Tag_                           |
-| `parent`    | `INTEGER`       | ID of the parent _Tag_, null if root        |
+| Key : `id`  | `INTEGER`       | Technical unique identifier of the _tag_    |
+| `name`      | `TEXT NOT NULL` | Name of the _tag_                           |
+| `parent`    | `INTEGER`       | ID of the parent _tag_, null if root        |
 | `retention` | `INTEGER < 256` | Desired last 50 % of retention factor       |
 | `weights`   | `JSON`          | (FSRS) 'w' array (e.g., [0.4, 0.6, 2.4, …]) |
 
@@ -264,8 +265,8 @@ CREATE TABLE item_tags(
 );
 ```
 
-The database only stores _Tags_ created or modified by the _user_ in their own
-`tag` row, not _Tags_ predefined in _Items_ files.
+The database only stores _tags_ created or modified by the _user_ in their own
+`tag` row, not _tags_ predefined in _items_ files.
 
 [Rust]: https://rust-lang.org
 [Dioxus]: https://dioxuslabs.com
