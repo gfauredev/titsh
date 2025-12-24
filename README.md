@@ -223,19 +223,19 @@ thresholds: [5s, 25s, 90s] # Base thresholds triggering Good, Hard and Timeout
 | `review`         | `DATETIME`         | Date (and time) of the last _Item’s_ review      |
 | `creation`       | `DATETIME`         | Date (and time) of the _Item’s_ creation         |
 
-| _Tag_ field | Type                    | Description                                 |
-| ----------- | ----------------------- | ------------------------------------------- |
-| Key : `id`  | `INTEGER`               | Technical unique identifier of the _Tag_    |
-| `name`      | `TEXT NOT NULL`         | Name of the _Tag_                           |
-| `parent`    | `INTEGER`               | ID of the parent _Tag_, null if root        |
-| `retention` | `500 < INTEGER <= 1000` | Desired retention factor on 1000            |
-| `weights`   | `JSON`                  | (FSRS) 'w' array (e.g., [0.4, 0.6, 2.4, …]) |
+| _Tag_ field | Type            | Description                                 |
+| ----------- | --------------- | ------------------------------------------- |
+| Key : `id`  | `INTEGER`       | Technical unique identifier of the _Tag_    |
+| `name`      | `TEXT NOT NULL` | Name of the _Tag_                           |
+| `parent`    | `INTEGER`       | ID of the parent _Tag_, null if root        |
+| `retention` | `INTEGER < 256` | Desired last 50 % of retention factor       |
+| `weights`   | `JSON`          | (FSRS) 'w' array (e.g., [0.4, 0.6, 2.4, …]) |
 
 ```sqlite
 CREATE TABLE item(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  url TEXT NOT NULL,  -- file://… or http://… or https://…
-  parameters JSON,    -- JSON attribute set of parametric items’ parameters
+  url TEXT NOT NULL, -- file://… or http://… or https://…
+  parameters JSON,   -- JSON attribute set of parametric items’ parameters
   stability REAL NOT NULL DEFAULT 0,         -- FSRS
   difficulty REAL NOT NULL DEFAULT 0,        -- FSRS
   elapsed_days INTEGER NOT NULL DEFAULT 0,   -- FSRS
@@ -252,7 +252,7 @@ CREATE TABLE tag(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   parent INTEGER, -- ID of the parent tag, null if root tag
-  retention INTEGER CHECK (retention > 500 AND retention <= 1000), -- /1000
+  retention INTEGER CHECK (retention < 256), -- (retention + 256) / 511
   weights JSON, -- FSRS 'w' array (e.g., [0.4, 0.6, 2.4, ...])
   FOREIGN KEY (parent) REFERENCES tag(id) ON DELETE CASCADE,
   UNIQUE(name, parent) -- Prevents duplicate children under the same parent
