@@ -4,23 +4,20 @@ lang: en-GB
 
 <!--toc:start-->
 
-- [Titsh](#titsh)
-  - [Flexible & Powerful Items](#flexible-powerful-items)
-    - [Item Presentation](#item-presentation)
-    - [Item Answer Evaluation](#item-answer-evaluation)
-    - [Item Scheduling](#item-scheduling)
+- [Flexible & Powerful Items](#flexible-powerful-items)
+  - [Item Presentation](#item-presentation)
+  - [Item Answer Evaluation](#item-answer-evaluation)
+  - [Item Scheduling](#item-scheduling)
   - [Parametric Items](#parametric-items)
   - [Items Repositories & Sharing](#items-repositories-sharing)
   - [Tagging](#tagging)
   - [Required References](#required-references)
-  - [Technical ~~Limitations~~ Simplicity](#technical-limitations-simplicity)
-    - [Read-only source Item files](#read-only-source-item-files)
-    - [Isolated and stateless (lightweight) scripting environment](#isolated-and-stateless-lightweight-scripting-environment)
-    - [Simple & Lightweight Internal Database](#simple-lightweight-internal-database)
+- [Technical ~~Limitations~~ Simplicity](#technical-limitations-simplicity)
+  - [Read-only source Item files](#read-only-source-item-files)
+  - [Isolated and stateless (lightweight) scripting environment](#isolated-and-stateless-lightweight-scripting-environment)
+  - [Simple & Lightweight Internal Database](#simple-lightweight-internal-database)
 
 <!--toc:end-->
-
-# Titsh
 
 **Titsh** is a cross-platform app _teaching_ atomic **skills** or units of
 **knowledge** (_Items_) **efficiently**, while _tracking_ their
@@ -42,7 +39,7 @@ UIs, tailored [user input](https://en.wikipedia.org/wiki/Testing_effect) and
 [linking](https://en.wikipedia.org/wiki/Integrative_learning) _Items_ to
 prerequisite, complementary or related ones.
 
-## Flexible & Powerful Items
+# Flexible & Powerful Items
 
 _Items_ are written in **lightweight markup** languages, in standard **text
 files**, editable by any text editor, easily shared and version controlled. They
@@ -54,7 +51,7 @@ customize their _Presentation_ and _Evaluation_.
 Currently, **Titsh** supports [Markdown](https://commonmark.org) (parsed by
 [pulldown-cmark]) markup embedding [Rhai] scripts.
 
-### Item Presentation
+## Item Presentation
 
 In **Titsh**, an _Item’s_ _Presentation_ is more than static content ; it adds
 **interactivity** and **dynamic elements** to optimize the learning. **Titsh**
@@ -67,7 +64,7 @@ interactive map where the _user_ has to click the correct “shape”. A “reve
 name among some plausible ones. Or, an _Item_ about equations could display each
 side as a plate of a balance scale, with factors as weights.
 
-### Item Answer Evaluation
+## Item Answer Evaluation
 
 **Titsh** can make the _user_ auto-evaluate with classic
 [Anki](https://docs.ankiweb.net/studying.html#answer-buttons) “Again”, “Hard”,
@@ -83,7 +80,7 @@ For example, the _Item_ about countries location could _Evaluate_ the _user_ :
 - Correct shape/name, Slowly (i.e. > 25s) → “Hard”
 - Incorrect shape/name, or None after timeout (i.e. 90s) → “Again”
 
-### Item Scheduling
+## Item Scheduling
 
 **Titsh** schedules _Item_ [just](https://en.wikipedia.org/wiki/Spacing_effect)
 before they are likely to be
@@ -141,12 +138,12 @@ _recursively_ if needed.
 starting from the _user’s_ desired **knowledge** or **skill** and getting the
 background only as strictly required.
 
-## Technical ~~Limitations~~ Simplicity
+# Technical ~~Limitations~~ Simplicity
 
 **Titsh** is [kept simple](https://en.wikipedia.org/wiki/KISS_principle), but
 may grow in future versions if really needed.
 
-### Read-only source Item files
+## Read-only source Item files
 
 - _Tracking_ entirely inside internal database
 - YAML or TOML front-matter
@@ -169,7 +166,7 @@ thresholds: [5s, 25s, 90s] # Base thresholds triggering Good, Hard and Timeout
 ---
 ```
 
-### Isolated and stateless (lightweight) scripting environment
+## Isolated and stateless (lightweight) scripting environment
 
 - Restricted set of inputs
   - Whether the _Item_ is reviewed or initially learned
@@ -206,7 +203,7 @@ thresholds: [5s, 25s, 90s] # Base thresholds triggering Good, Hard and Timeout
 ```
 ````
 
-### Simple & Lightweight Internal Database
+## Simple & Lightweight Internal Database
 
 | _Item_ field     | Type               | Description                                      |
 | ---------------- | ------------------ | ------------------------------------------------ |
@@ -233,34 +230,34 @@ thresholds: [5s, 25s, 90s] # Base thresholds triggering Good, Hard and Timeout
 
 ```sqlite
 CREATE TABLE item(
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  url TEXT NOT NULL, -- file://… or http://… or https://…
-  parameters JSON,   -- JSON attribute set of parametric items’ parameters
-  stability REAL NOT NULL DEFAULT 0,         -- FSRS
-  difficulty REAL NOT NULL DEFAULT 0,        -- FSRS
-  elapsed_days INTEGER NOT NULL DEFAULT 0,   -- FSRS
-  scheduled_days INTEGER NOT NULL DEFAULT 0, -- FSRS
-  reps INTEGER NOT NULL DEFAULT 0,           -- FSRS
-  lapses INTEGER NOT NULL DEFAULT 0,         -- FSRS
-  state INTEGER NOT NULL DEFAULT 0, -- 0: New, 1: Learn, 2: Review, 3: Relearn
+  id INTEGER PRIMARY KEY AUTOINCREMENT, -- Technical
+  url TEXT NOT NULL,        -- file://… | http://… | https://…
+  parameters JSON NOT NULL, -- JSON attribute set of parametric item parameters
+  stability REAL NOT NULL DEFAULT 0,    -- FSRS Stability
+  difficulty REAL NOT NULL DEFAULT 0,   -- FSRS Difficulty
+  elapsed INTEGER NOT NULL DEFAULT 0,   -- FSRS Elapsed Days
+  scheduled INTEGER NOT NULL DEFAULT 0, -- FSRS Scheduled Days
+  reps INTEGER NOT NULL DEFAULT 0,      -- FSRS Repetitions
+  lapses INTEGER NOT NULL DEFAULT 0,    -- FSRS Lapses
+  state INTEGER NOT NULL DEFAULT 0 CHECK (state < 4), -- FSRS Learning State
   review DATETIME,                             -- Last review date
   creation DATETIME DEFAULT CURRENT_TIMESTAMP, -- Initial creation date
   UNIQUE(url, parameters)
 );
 
 CREATE TABLE tag(
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
+  id INTEGER PRIMARY KEY AUTOINCREMENT, -- Technical
+  name TEXT NOT NULL, -- Actual text of the tag
   parent INTEGER, -- ID of the parent tag, null if root tag
   retention INTEGER CHECK (retention < 256), -- (retention + 256) / 511
-  weights JSON, -- FSRS 'w' array (e.g., [0.4, 0.6, 2.4, ...])
+  weights JSON, -- FSRS 'w' array, to optimize sometimes
   FOREIGN KEY (parent) REFERENCES tag(id) ON DELETE CASCADE,
   UNIQUE(name, parent) -- Prevents duplicate children under the same parent
 );
 
 CREATE TABLE item_tags(
-  item INTEGER NOT NULL,
-  tag INTEGER NOT NULL,
+  item INTEGER NOT NULL, -- Many-to-many relationship
+  tag INTEGER NOT NULL,  -- between items and tags
   PRIMARY KEY (item, tag),
   FOREIGN KEY (item) REFERENCES item(id) ON DELETE CASCADE,
   FOREIGN KEY (tag) REFERENCES tag(id) ON DELETE CASCADE
@@ -279,14 +276,14 @@ The database only stores _Tags_ created or modified by the _user_ in their own
 [gray-matter]: https://github.com/yuchanns/gray-matter-rs
 [pulldown-cmark]: https://github.com/pulldown-cmark/pulldown-cmark
 [AsciiDoc]: https://asciidoc.org
-[reStructuredText]: https://docutils.sourceforge.io/rst.html
 [Typst]: https://typst.app
 [Typst Core]: https://github.com/typst/typst
-[Boa]: https://github.com/boa-dev/boa
-[RustPython]: https://github.com/RustPython/RustPython
+[reStructuredText]: https://docutils.sourceforge.io/rst.html
+[Rhai]: https://github.com/rhaiscript/rhai
+[Steel]: https://github.com/mattwparas/steel
 [mLua]: https://github.com/mlua-rs/mlua
 [Gleam]: https://github.com/gleam-lang/gleam
-[Steel]: https://github.com/mattwparas/steel
-[Rhai]: https://github.com/rhaiscript/rhai
+[Boa]: https://github.com/boa-dev/boa
+[RustPython]: https://github.com/RustPython/RustPython
 [Wasmi]: https://github.com/wasmi-labs/wasmi
 [WasmTime]: https://github.com/bytecodealliance/wasmtime
