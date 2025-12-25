@@ -13,8 +13,8 @@ lang: en-GB
   - [Tagging](#tagging)
   - [Required References](#required-references)
 - [Technical ~~Limitations~~ Simplicity](#technical-limitations-simplicity)
-  - [Read-only source Item files](#read-only-source-item-files)
-  - [Isolated and stateless (lightweight) scripting environment](#isolated-and-stateless-lightweight-scripting-environment)
+  - [Read-only Source Item Files](#read-only-source-item-files)
+  - [Isolated and Stateless (Lightweight) Scripting Environment](#isolated-and-stateless-lightweight-scripting-environment)
   - [Simple & Lightweight Internal Database](#simple-lightweight-internal-database)
 
 <!--toc:end-->
@@ -54,8 +54,8 @@ Currently, **Titsh** supports [Markdown](https://commonmark.org) (parsed by
 ## Item Presentation
 
 In **Titsh**, an _item’s_ _presentation_ is more than static content ; it adds
-**interactivity** and **dynamic elements** to optimize the learning. **Titsh**
-is not only a **memory** app, and _presentation_ is responsible for handling the
+**interactivity** and **dynamic elements** to optimize learning. **Titsh** is
+not only a **memory** app ; _presentation_ is responsible for handling the
 _acquisition_ phase, making the user understand a concept never studied before.
 
 For example, an _item_ about countries location can be _presented_ as an
@@ -119,7 +119,7 @@ However, _tags_ can be hierarchical (e.g. `math/algebra/linear/`), and **Titsh**
 generates _item’s_ first _tag(s)_ from its path (relative to the _repository_).
 
 The more _tags_ different _items_ share, the more **Titsh** see them as
-_related_ (or Complementary). Therefore, **Titsh** can present them during
+_related_ (or complementary). Therefore, **Titsh** can present them during
 review sessions to reinforce learning.
 
 Extremely _related_ _items_ may be considered different ways of presenting the
@@ -143,7 +143,7 @@ background only as strictly required.
 **Titsh** is [kept simple](https://en.wikipedia.org/wiki/KISS_principle), but
 may grow in future versions if really needed.
 
-## Read-only source Item files
+## Read-only Source Item Files
 
 - _Tracking_ entirely inside internal database
 - YAML or TOML front-matter
@@ -167,7 +167,7 @@ thresholds: [5s, 25s, 90s] # Base thresholds triggering Good, Hard and Timeout
 ---
 ```
 
-## Isolated and stateless (lightweight) scripting environment
+## Isolated and Stateless (Lightweight) Scripting Environment
 
 - Restricted set of inputs
   - Whether the _item_ is reviewed or initially learned
@@ -184,23 +184,53 @@ thresholds: [5s, 25s, 90s] # Base thresholds triggering Good, Hard and Timeout
 # Country Name
 
 ```rhai presentation
-# Get the country name and shape data from Titsh (according to Scheduling logic)
+# Titsh provides a 'params' object for parametric items
+let country_name = params.get("name"); 
+let country_shape = params.get("shape_id");
 
-# Return a world map with the shape data (country) highlighted (whiter)
+# 1. Create a container for the map
+let map_container = create_element("div");
+
+# 2. Load the resource declared in front-matter
+let world_map = load_resource("worldMap.png");
+
+# 3. Render the map with a highlight filter on the specific shape
+# 'render_svg_overlay' is a hypothetical Titsh helper function
+let rendered_content = render_svg_overlay(world_map, country_shape, "#{fill: 'white'; opacity: 0.8}");
+
+# Return the object to be displayed in the UI
+rendered_content;
 ```
 
 ## Select the highlighted country (among the options)
 
 ```rhai evaluation
-# Display a correct name button scrambled among (e.g. five) plausible ones
+# Inputs: 'thresholds' (from front-matter) and 'start_time'
+let start_time = now(); 
 
-# Wait for the user to click a button or timeout after thresholds[2]
+# 1. Generate multiple choice buttons (shuffled)
+let choices = params.get("distractors"); # e.g., ["Germany", "Spain", "Italy"]
+choices.push(params.get("name"));
+choices.shuffle();
 
-# Return the evaluation enum
-# - "Easy" if correct and in less than thresholds[0]
-# - "Good" if correct and in less than thresholds[1]
-# - "Hard" if correct and in more than thresholds[1]
-# - "Again" wrong or absent answer
+# 2. Wait for User Interaction
+# 'wait_for_click' blocks until a button is pressed or timeout occurs
+let user_choice = wait_for_click(choices, thresholds[2]); 
+
+# 3. Logic to determine the Evaluation Enum
+let duration = now() - start_time;
+
+if user_choice == params.get("name") {
+    if duration < thresholds[0] {
+        return "Easy";   // Correct and fast
+    } else if duration < thresholds[1] {
+        return "Good";   // Correct and moderate
+    } else {
+        return "Hard";   // Correct but slow
+    }
+} else {
+    return "Again";      // Incorrect or Timeout
+}
 ```
 ````
 
