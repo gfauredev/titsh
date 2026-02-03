@@ -15,6 +15,8 @@ lang: en-GB
 - [Technical ~~Limitations~~ Simplicity](#technical-limitations-simplicity)
   - [Read-only Source Item Files](#read-only-source-item-files)
   - [Isolated and Stateless (Lightweight) Scripting Environment](#isolated-and-stateless-lightweight-scripting-environment)
+    - [Titsh Scripting API](#titsh-scripting-api)
+      - [threshold()](#threshold)
   - [Simple & Lightweight Internal Database](#simple-lightweight-internal-database)
 
 <!--toc:end-->
@@ -163,7 +165,6 @@ tags:
   - Countries/France
 ressources: [worldMap.png]
 params: [country-shape.json] # Map of country names to shapes
-thresholds: [5s, 25s, 90s] # Base thresholds triggering Good, Hard and Timeout
 ---
 ```
 
@@ -205,34 +206,43 @@ rendered_content;
 ## Select the highlighted country (among the options)
 
 ```rhai evaluation
-# Inputs: 'thresholds' (from front-matter) and 'start_time'
-let start_time = now(); 
+# Declare and start base (default) thresholds (in s) triggering Good, Hard and Timeout
+threshold(5, 25, 90) # Titsh could increase them according to difficulty, user needs…
 
-# 1. Generate multiple choice buttons (shuffled)
-let choices = params.get("distractors"); # e.g., ["Germany", "Spain", "Italy"]
+# Generate multiple choice buttons (shuffled)
+let choices = params.get("distractors"); # e.g. ["Germany", "Spain", …]
+# Or do it randomly / by similarity algo / by learning model…
 choices.push(params.get("name"));
 choices.shuffle();
 
-# 2. Wait for User Interaction
+# Wait for User Interaction
 # 'wait_for_click' blocks until a button is pressed or timeout occurs
 let user_choice = wait_for_click(choices, thresholds[2]); 
 
-# 3. Logic to determine the Evaluation Enum
+# Logic to determine the Evaluation Enum
 let duration = now() - start_time;
 
 if user_choice == params.get("name") {
     if duration < thresholds[0] {
-        return "Easy";   // Correct and fast
+        return "Easy"; # Correct and fast
     } else if duration < thresholds[1] {
-        return "Good";   // Correct and moderate
+        return "Good"; # Correct and moderate
     } else {
-        return "Hard";   // Correct but slow
+        return "Hard"; # Correct but slow
     }
 } else {
-    return "Again";      // Incorrect or Timeout
+    return "Again";    # Incorrect or Timeout
 }
 ```
 ````
+
+### Titsh Scripting API
+
+Objects provided from front-matter… <!-- TODO -->
+
+#### threshold()
+
+<!-- TODO -->
 
 ## Simple & Lightweight Internal Database
 
@@ -296,7 +306,8 @@ CREATE TABLE item_tags(
 ```
 
 The database only stores _tags_ created or modified by the _user_ in their own
-`tag` row, not _tags_ predefined in _items_ files.
+`tag` row, not _tags_ predefined in _items_ files. These, however, could be
+cached elsewhere if needed for performance.
 
 [Rust]: https://rust-lang.org
 [Dioxus]: https://dioxuslabs.com
