@@ -57,8 +57,9 @@ First version of **Titsh** will likely support [Markdown] (parsed by
 
 In **Titsh**, an _item’s_ _presentation_ is more than static content ; it adds
 **interactivity** and **dynamic elements** to optimize learning. **Titsh** is
-not only a **memory** app ; _presentation_ is responsible for handling the
-_acquisition_ phase, making the user understand a concept never studied before.
+not only a **memory** app ; _presentation_ is considered responsible for
+handling the _acquisition_ phase if needed (e.g. if review count is 0), making
+the user understand a concept never studied before.
 
 For example, an _item_ about countries location can be _presented_ as an
 interactive map where the user has to click the correct “shape”. A “reverse”,
@@ -105,7 +106,15 @@ _items_ by variating its country name and “shape” _parameters_.
 _Parameters_ themselves are a dictionary (or map) written in a textual data
 format (e.g. JSON, YAML, TOML…), where the key is the _variant item’s_ name (or
 identifier), and the value is the variating data used by the embedded scripts.
-They can be placed into the front-matter or imported from a separate file.
+_Parameters_ can be placed into the front-matter or imported from a separate
+file.
+
+<!-- They can also be a bare list (or array), where each element is the _variant item’s_ defining data. -->
+
+> When user starts learning (views for the first time without skipping) a
+> parametric _item_ _variant_, **Titsh** copies its parameters into its internal
+> database. This way, a change or removal can be detected, and the user safely
+> asked how to handle it.
 
 Each _parametric item_ variant is identified by its path plus its parameters’
 values in **Titsh** internal database (likely [SQLite] via [sqlx]). _Parameters_
@@ -113,9 +122,10 @@ can be imported from files of supported data formats.
 
 ## Items Repositories & Sharing
 
-**Titsh** stores _item_ files in a local, on-disk _items repository_. This
-repository can contain clones of other remote HTTP _repositories_ (provided
-their URL) ; **Titsh** will offer the user to sync them at startup.
+**Titsh** stores _item_ files in an on-disk _items repository_. Remote
+_repositories_ can be cloned (via bare HTTP download or `git clone`) in
+subdirectories of it, and _items_ they contain will be picked as any other by
+**Titsh**. A button allows to user to fetch updates.
 
 This allows to easily share _items repositories_ through a web or Git server.
 For now, it’s up to the user to find interesting and trustable _items
@@ -148,6 +158,9 @@ Via this simple behaviour, **Titsh** encourages
 [goal-based](https://en.wikipedia.org/wiki/Project-based_learning) learning,
 starting from the user’s desired **knowledge** or **skill** and getting the
 background only as strictly required.
+
+Reversely, when all requirements of a _paused_ _item_ are remembered correctly
+several times in a row, the _paused_ _item_ is automatically reactivated.
 
 ## Technical ~~Limitations~~ Simplicity
 
@@ -195,14 +208,21 @@ timeout: 60 # Default timeout in seconds, can be changed if user needs
 
 - Restricted set of inputs
   - _Item’s_ review count (0 of initially learned)
+  - _Item’s_ current stability: days required for the probability of recalling
+    that specific card to drop from 100 % to 90 %
+  - _Item’s_ current difficulty: how inherently complex the card's concept is,
+    typically between 1 and 10
+  - _Item’s_ current retrievability: calculated probability that it will
+    successfully be recalled today
+  - History of past _item_ evaluations, timestamped
   - User mouse or touchscreen events, text input
   - Current date and time
-  - Eventual attribute set of parameters (if params is set, parametric _item_)
-  - Eventual resources (images, sounds…) declared in front-matter
+  - Eventual "parameters" as structured data, if params is set
+  - Eventual resources (images, sounds…) made available in front-matter
 - Very restricted set of outputs
-  - Rendered object displayed in place of the code block
+  - Rendered object(s) displayed in place of the code block
   - Eventual sound played to the user
-  - _Evaluation_ enum: “Again”, “Hard”, “Good”, “Easy”
+  - _Evaluation_ enum: “Again”, “Hard”, “Good”, “Easy”, “Skip”
 
 ````markdown
 …
