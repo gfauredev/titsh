@@ -102,6 +102,11 @@ For example, instead of writing ~200 very similar _items_ about countries
 location, one _parametric item_ file can be used to generate all the necessary
 _items_ by variating its country name and “shape” _parameters_.
 
+_Parameters_ themselves are a dictionary (or map) written in a textual data
+format (e.g. JSON, YAML, TOML…), where the key is the _variant item’s_ name (or
+identifier), and the value is the variating data used by the embedded scripts.
+They can be placed into the front-matter or imported from a separate file.
+
 Each _parametric item_ variant is identified by its path plus its parameters’
 values in **Titsh** internal database (likely [SQLite] via [sqlx]). _Parameters_
 can be imported from files of supported data formats.
@@ -172,15 +177,16 @@ tags:
   # From path: Geography/Countries/Shape
   # From lang: English
   # From presence of ressources/params: Parametric
-  - $params.0.key # Country name from country_shape.json
+  # From params dict: country name, e.g. France
   - Method/Visual
   - Easy
   - …
-ressources: [world_map.png]
-params: [country_shape.json] # Map of country names to shapes
+ressources: [world_map.png] # Files accessible from scripts
+params: country_shape.json # Map of country names to shapes
+timeout: 60 # Default timeout in seconds, can be changed if user needs
 ---
 
-# Select $params.0.key on the map
+# Select a country on the map by its name
 
 …
 ```
@@ -201,54 +207,20 @@ params: [country_shape.json] # Map of country names to shapes
 ````markdown
 …
 
-# Select $params.0.key on the map
+# Select a country on the map by its name
 
 ```rhai presentation
-# TODO define simple API, use it here
-# Titsh provides a 'params' object for parametric items
-let country_name = params.get("name"); 
-let country_shape = params.get("shape_id");
-# Create a container for the map
-let map_container = create_element("div");
-# Load the resource declared in front-matter
-let world_map = load_resource("world_map.png");
-# Render the map with a highlight filter on the specific shape
-# 'render_svg_overlay' is a hypothetical Titsh helper function
-let rendered_content = render_svg_overlay(world_map, country_shape, "#{fill: 'white'; opacity: 0.8}");
-# Return the object to be displayed in the UI
-rendered_content;
+# TODO define simple API in SCRIPTING.md, use it in example script below
+# Display the name of the country we’re searching
+# Display a world map with clickable countries, random centering
 ```
 
-## Select the highlighted country (among the options)
-
 ```rhai evaluation
-# Declare and start base (default) thresholds (in s) triggering Good, Hard and Timeout
-threshold(5, 25, 90) # Titsh could increase them according to difficulty, user needs…
-
-# Generate multiple choice buttons (shuffled)
-let choices = params.get("distractors"); # e.g. ["Germany", "Spain", …]
-# Or do it randomly / by similarity algo / by learning model…
-choices.push(params.get("name"));
-choices.shuffle();
-
-# Wait for User Interaction
-# 'wait_for_click' blocks until a button is pressed or timeout occurs
-let user_choice = wait_for_click(choices, thresholds[2]); 
-
-# Logic to determine the Evaluation Enum
-let duration = now() - start_time;
-
-if user_choice == params.get("name") {
-    if duration < thresholds[0] {
-        return "Easy"; # Correct and fast
-    } else if duration < thresholds[1] {
-        return "Good"; # Correct and moderate
-    } else {
-        return "Hard"; # Correct but slow
-    }
-} else {
-    return "Again";    # Incorrect or Timeout
-}
+# Return "Again" if wrong country shape clicked
+## Automatic "Again" if timeout reached before evaluation returns
+# Return "Easy" if clicked in less than timeout/8
+# Return "Good" if clicked in less than timeout/2
+# Return "Hard" otherwise
 ```
 ````
 
@@ -257,80 +229,71 @@ if user_choice == params.get("name") {
 [Titsh] is licensed under the AGPL-3.0, see [LICENSE](LICENSE) for details.
 
 [Titsh]: https://github.com/gfauredev/titsh
-[Rust]: https://rust-lang.org
-[Dioxus]: https://dioxuslabs.com
-[FSRS]: https://github.com/open-spaced-repetition/fsrs4anki/wiki/The-Algorithm
-[fsrs-rs]: https://github.com/open-spaced-repetition/fsrs-rs
 [AsciiDoc]: https://asciidoc.org
 [Boa]: https://github.com/boa-dev/boa
-[CommonMark]: https://commonmark.org
-[Markdown]: https://commonmark.org
-[fuzzyhash-rs]: https://github.com/rustysec/fuzzyhash-rs
-[fuzzy hash]: https://github.com/rustysec/fuzzyhash-rs
-[Gleam]: https://github.com/gleam-lang/gleam
-[gray-matter]: https://github.com/yuchanns/gray-matter-rs
-[Lua]: https://www.lua.org
-[Luau]: https://luau.org
-[mLua]: https://github.com/mlua-rs/mlua
-[pulldown-cmark]: https://github.com/pulldown-cmark/pulldown-cmark
-[Rhai]: https://github.com/rhaiscript/rhai
-[RustPython]: https://github.com/RustPython/RustPython
-[reStructuredText]: https://docutils.sourceforge.io/rst.html
-[Steel]: https://github.com/mattwparas/steel
-[SQLite]: https://sqlite.org
-[sqlx]: https://github.com/launchbadge/sqlx
-[serde]: https://github.com/serde-rs/serde
-[Typst]: https://typst.app
-[Typst Core]: https://github.com/typst/typst
-[Wasmi]: https://github.com/wasmi-labs/wasmi
-[WasmTime]: https://github.com/bytecodealliance/wasmtime
-
-<!-- TODO sort alphabetically -->
-
 [Cargo]: https://doc.rust-lang.org/cargo
 [cargo test]: https://doc.rust-lang.org/cargo/commands/cargo-test.html
 [cargo-llvm-cov]: https://github.com/taiki-e/cargo-llvm-cov
 [Clippy]: https://github.com/rust-lang/rust-clippy
 [Conventional Commits]: https://www.conventionalcommits.org
 [Conventional Branch]: https://conventional-branch.github.io
+[CommonMark]: https://commonmark.org
 [Dioxus]: https://dioxuslabs.com
 [dx]: https://dioxuslabs.com
 [direnv]: https://direnv.net
 [`direnv`]: https://direnv.net
-[exercise database]: https://github.com/gfauredev/free-exercise-db
-[exercise db]: https://github.com/gfauredev/free-exercise-db
+[fuzzyhash-rs]: https://github.com/rustysec/fuzzyhash-rs
+[fuzzy hash]: https://github.com/rustysec/fuzzyhash-rs
 [`flake.nix`]: flake.nix
-[free-exercise-db]: https://github.com/gfauredev/free-exercise-db
-[old free-exercise-db]: https://github.com/yuhonas/free-exercise-db
+[FSRS]: https://github.com/open-spaced-repetition/fsrs4anki/wiki/The-Algorithm
+[fsrs-rs]: https://github.com/open-spaced-repetition/fsrs-rs
+[Gleam]: https://github.com/gleam-lang/gleam
+[gray-matter]: https://github.com/yuchanns/gray-matter-rs
 [Guilhem Fauré]: https://www.guilhemfau.re
 [Git]: https://git-scm.com
-[GitHub Pull Requests]: https://github.com/gfauredev/LogOut/pulls
-[GitHub Issues]: https://github.com/gfauredev/LogOut/issues
+[GitHub Pull Requests]: https://github.com/gfauredev/Titsh/pulls
+[GitHub Issues]: https://github.com/gfauredev/Titsh/issues
 [GitHub Flow]: https://githubflow.github.io
 [Helix]: https://helix-editor.com
+[IndexedDB]: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
+[Lua]: https://www.lua.org
+[Luau]: https://luau.org
 [lcov]: https://github.com/linux-test-project/lcov
 [lldb]: https://lldb.llvm.org
 [llvm-cov]: https://llvm.org/docs/CommandGuide/llvm-cov.html
 [Maestro]: https://maestro.dev
+[mLua]: https://github.com/mlua-rs/mlua
+[Markdown]: https://commonmark.org
 [nextest]: https://nexte.st
 [Nix]: https://nixos.org
 [pwa]: https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps
 [pagespeed insights]: https://pagespeed.web.dev
+[pulldown-cmark]: https://github.com/pulldown-cmark/pulldown-cmark
+[Rhai]: https://github.com/rhaiscript/rhai
+[RustPython]: https://github.com/RustPython/RustPython
+[Rust]: https://rust-lang.org
+[reStructuredText]: https://docutils.sourceforge.io/rst.html
 [renovate]: https://www.mend.io/renovate
 [rust-analyzer]: https://rust-analyzer.github.io
 [rust]: https://www.rust-lang.org
 [rustc]: https://doc.rust-lang.org/rustc
 [rustdoc]: https://doc.rust-lang.org/rustdoc
 [rustfmt]: https://github.com/rust-lang/rustfmt
-[VS Code]: https://code.visualstudio.com
-[SemVer]: https://semver.org
-[Serde]: https://serde.rs
-[IndexedDB]: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
 [Rexie]: https://github.com/wasmerio/rexie
-[SQLite]: https://www.sqlite.org/index.html
 [Rusqlite]: https://github.com/rusqlite/rusqlite
 [Reqwest]: https://github.com/seanmonstar/reqwest
+[Steel]: https://github.com/mattwparas/steel
+[SQLite]: https://sqlite.org
+[sqlx]: https://github.com/launchbadge/sqlx
+[serde]: https://github.com/serde-rs/serde
+[SemVer]: https://semver.org
+[Serde]: https://serde.rs
+[Typst]: https://typst.app
+[Typst Core]: https://github.com/typst/typst
 [Time]: https://github.com/time-rs/time
 [Tokio]: https://tokio.rs
-[yellow labs]: https://yellowlab.tools
+[VS Code]: https://code.visualstudio.com
 [Web-sys]: https://rustwasm.github.io/wasm-bindgen/web-sys/index.html
+[Wasmi]: https://github.com/wasmi-labs/wasmi
+[WasmTime]: https://github.com/bytecodealliance/wasmtime
+[yellow labs]: https://yellowlab.tools

@@ -5,13 +5,7 @@ lang: en-GB
 <!-- > **Bold** Learning, education, memory or technical concepts\ -->
 <!-- > _Italic_ Titsh specific concepts or features -->
 
-<!--toc:start-->
-
-- [Simple & Lightweight Internal Database](#simple-lightweight-internal-database)
-
-<!--toc:end-->
-
-# Simple & Lightweight Internal Database
+# Titsh’s Simple & Lightweight Internal Database
 
 | _Item_ field     | Type               | Description                                      |
 | ---------------- | ------------------ | ------------------------------------------------ |
