@@ -1,0 +1,67 @@
+# [application]
+# android_main_activity = "android/MainActivity.kt"
+# asset_dir = "public"
+# ios_entitlements = ""
+# ios_info_plist = ""
+# macos_entitlements = ""
+# macos_info_plist = ""
+# out_dir = ""
+# public_dir = "public"
+# tailwind_input = ""
+# tailwind_output = ""
+
+[bundle]
+category = "Education"
+copyright = "Copyright 2026 Guilhem Fauré"
+# icon = ["logo.svg"]
+identifier = "re.guilhemfau.titsh"
+long_description = "Evidence based learning and memorization app"
+publisher = "Guilhem Fauré"
+# resources = [""]
+short_description = "Learning and memorization app"
+
+# [deep_links] TODO See if this can replace/lighten custom implementation
+# hosts = []
+# paths = []
+# schemes = []
+
+[permissions]
+# background-location.description = "Review location?"
+# location = { precision = "fine", description = "Review location?" } 
+# calendar = { access = "read-write", description = "Review planning?" } 
+# local-network.description = "P2P Syncing?" 
+# media-library.description = "Import/Export?" 
+# nerby-wifi.description = "P2P Syncing?" 
+# notifications.description = "Review reminder?"
+# photos = { access = "read", description = "Import/Export?" } 
+
+[android]
+compile_sdk = 36
+# features = [""]
+# foreground_service_types = [""]
+# manifest = "android/AndroidManifest.xml"
+min_sdk = 28
+# proguard_rules = [""]
+target_sdk = 36
+
+# [android.permissions]
+# "android.permission.WAKE_LOCK".description = "Keep screen on during reviews"
+# "android.permission.READ_EXTERNAL_STORAGE".description = "Import JSON data"
+# "android.permission.READ_MEDIA_IMAGES".description = "Access images"
+# "android.permission.READ_MEDIA_VIDEO".description = "Access videos"
+# "android.permission.POST_NOTIFICATIONS".description = "Review alerts"
+# "android.permission.READ_MEDIA_AUDIO".description = "Access audio"
+
+[android.application]
+# Ensure WebView reports system dark/light setting to CSS `prefers-color-scheme`
+theme = "@style/Theme.AppCompat.DayNight.NoActionBar"
+
+[web]
+app.title = "Titsh"
+pre_compress = true
+# app.base_path = "/"
+
+[web.watcher]
+index_on_404 = true
+reload_html = true
+# watch_path = ["assets", "public", "src"]
