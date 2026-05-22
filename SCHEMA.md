@@ -7,10 +7,10 @@ lang: en-GB
 
 # Titsh’s Simple & Lightweight Internal Database
 
-## Item Table
+> For each field, write a paragraph with its name, type, description and
+> argument why it is needed
 
-| _Item_ field | Type | Description |
-| ------------ | ---- | ----------- |
+## Item Table
 
 ```sqlite
 CREATE TABLE item(
@@ -18,9 +18,6 @@ CREATE TABLE item(
 ```
 
 ## Tag Table
-
-| _Tag_ field | Type | Description |
-| ----------- | ---- | ----------- |
 
 ```sqlite
 CREATE TABLE tag(

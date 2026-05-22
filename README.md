@@ -175,10 +175,11 @@ scripts can use the [`SCRIPTING.md`](SCRIPTING.md) API.
 - _Tracking_ entirely inside internal database
 - YAML or TOML front-matter
 - Identified only by their paths, relative to the single _item repository_
-- Marked as _lost_ if file or _parameters_ not found / (re)moved
+- Marked as _lost_ if file or _parameters_ key not found / (re)moved
   - User can update _lost_ _items’_ path or _parameters_, or definitively remove
   - Progress _tracking_ data is never deleted without explicit user action
   - Prompt to relink or remove when it should be reviewed
+- Marked as _modified_ if _parameters_ value different from internally stored
 - Could detect modifications and be able to suggest the most similar _item_ if
   _lost_ by storing a [fuzzy hash] of it or leveraging Git similarity detection
 
