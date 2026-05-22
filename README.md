@@ -17,6 +17,7 @@ lang: en-GB
 - [Technical ~~Limitations~~ Simplicity](#technical-limitations-simplicity)
   - [Read-only Simple Text Source Item Files](#read-only-simple-text-source-item-files)
   - [Isolated and Stateless (Lightweight) Scripting Environment](#isolated-and-stateless-lightweight-scripting-environment)
+- [Licensing and Credits](#licensing-and-credits)
 
 <!--toc:end-->
 
@@ -120,7 +121,7 @@ repositories_; a ranking system to quickly find high-quality ones is planned.
 _Items_ are organized flexibly with _tags_, not in rigid categories or folders.
 However, _tags_ can be hierarchical (e.g. `math/algebra/linear/`), and **Titsh**
 generates _item’s_ first (potentially nested) _tag_ from its containing
-directory hierarchy relative to the _repository_ root.
+directory hierarchy, relative to the _repository_ root.
 
 The more _tags_ different _items_ share, the more **Titsh** see them as
 _related_ (or complementary). Therefore, **Titsh** can present them during
@@ -148,9 +149,8 @@ background only as strictly required.
 **Titsh** is [kept simple](https://en.wikipedia.org/wiki/KISS_principle), but
 may grow in future versions if really needed.
 
-**Titsh** stores and communicate data as in [`SCHEMA.md`](SCHEMA.md).
-
-**Titsh** offers [`SCRIPTING.md`](SCRIPTING.md) API to embedded scripts.
+Data is stored and communicated as in [`SCHEMA.md`](SCHEMA.md), and embedded
+scripts can use the [`SCRIPTING.md`](SCRIPTING.md) API.
 
 ### Read-only Simple Text Source Item Files
 
@@ -172,7 +172,7 @@ tags:
   # From path: Geography/Countries/Shape
   # From lang: English
   # From presence of ressources/params: Parametric
-  - $params.0.key #< Country name from country_shape.json
+  - $params.0.key # Country name from country_shape.json
   - Method/Visual
   - Easy
   - …
@@ -252,6 +252,11 @@ if user_choice == params.get("name") {
 ```
 ````
 
+## Licensing and Credits
+
+[Titsh] is licensed under the AGPL-3.0, see [LICENSE](LICENSE) for details.
+
+[Titsh]: https://github.com/gfauredev/titsh
 [Rust]: https://rust-lang.org
 [Dioxus]: https://dioxuslabs.com
 [FSRS]: https://github.com/open-spaced-repetition/fsrs4anki/wiki/The-Algorithm
@@ -261,6 +266,7 @@ if user_choice == params.get("name") {
 [CommonMark]: https://commonmark.org
 [Markdown]: https://commonmark.org
 [fuzzyhash-rs]: https://github.com/rustysec/fuzzyhash-rs
+[fuzzy hash]: https://github.com/rustysec/fuzzyhash-rs
 [Gleam]: https://github.com/gleam-lang/gleam
 [gray-matter]: https://github.com/yuchanns/gray-matter-rs
 [Lua]: https://www.lua.org
@@ -278,3 +284,53 @@ if user_choice == params.get("name") {
 [Typst Core]: https://github.com/typst/typst
 [Wasmi]: https://github.com/wasmi-labs/wasmi
 [WasmTime]: https://github.com/bytecodealliance/wasmtime
+
+<!-- TODO sort alphabetically -->
+
+[Cargo]: https://doc.rust-lang.org/cargo
+[cargo test]: https://doc.rust-lang.org/cargo/commands/cargo-test.html
+[cargo-llvm-cov]: https://github.com/taiki-e/cargo-llvm-cov
+[Clippy]: https://github.com/rust-lang/rust-clippy
+[Conventional Commits]: https://www.conventionalcommits.org
+[Conventional Branch]: https://conventional-branch.github.io
+[Dioxus]: https://dioxuslabs.com
+[dx]: https://dioxuslabs.com
+[direnv]: https://direnv.net
+[`direnv`]: https://direnv.net
+[exercise database]: https://github.com/gfauredev/free-exercise-db
+[exercise db]: https://github.com/gfauredev/free-exercise-db
+[`flake.nix`]: flake.nix
+[free-exercise-db]: https://github.com/gfauredev/free-exercise-db
+[old free-exercise-db]: https://github.com/yuhonas/free-exercise-db
+[Guilhem Fauré]: https://www.guilhemfau.re
+[Git]: https://git-scm.com
+[GitHub Pull Requests]: https://github.com/gfauredev/LogOut/pulls
+[GitHub Issues]: https://github.com/gfauredev/LogOut/issues
+[GitHub Flow]: https://githubflow.github.io
+[Helix]: https://helix-editor.com
+[lcov]: https://github.com/linux-test-project/lcov
+[lldb]: https://lldb.llvm.org
+[llvm-cov]: https://llvm.org/docs/CommandGuide/llvm-cov.html
+[Maestro]: https://maestro.dev
+[nextest]: https://nexte.st
+[Nix]: https://nixos.org
+[pwa]: https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps
+[pagespeed insights]: https://pagespeed.web.dev
+[renovate]: https://www.mend.io/renovate
+[rust-analyzer]: https://rust-analyzer.github.io
+[rust]: https://www.rust-lang.org
+[rustc]: https://doc.rust-lang.org/rustc
+[rustdoc]: https://doc.rust-lang.org/rustdoc
+[rustfmt]: https://github.com/rust-lang/rustfmt
+[VS Code]: https://code.visualstudio.com
+[SemVer]: https://semver.org
+[Serde]: https://serde.rs
+[IndexedDB]: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
+[Rexie]: https://github.com/wasmerio/rexie
+[SQLite]: https://www.sqlite.org/index.html
+[Rusqlite]: https://github.com/rusqlite/rusqlite
+[Reqwest]: https://github.com/seanmonstar/reqwest
+[Time]: https://github.com/time-rs/time
+[Tokio]: https://tokio.rs
+[yellow labs]: https://yellowlab.tools
+[Web-sys]: https://rustwasm.github.io/wasm-bindgen/web-sys/index.html
