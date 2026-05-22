@@ -2,6 +2,9 @@
 lang: en-GB
 ---
 
+<!-- > **Bold** Learning, education, memory or technical concepts\ -->
+<!-- > _Italic_ Titsh specific concepts or features -->
+
 <!--toc:start-->
 
 - [Flexible & Powerful Items](#flexible-powerful-items)
@@ -21,7 +24,7 @@ lang: en-GB
 
 <!--toc:end-->
 
-**Titsh** is a cross-platform app _teaching_ atomic **skills** or units of
+**Titsh** is a cross-platform app teaching atomic **skills** or units of
 **knowledge** (_items_) **efficiently**, while _tracking_ their
 [long term](https://en.wikipedia.org/wiki/Long-term_memory) **retention**.
 
@@ -50,8 +53,9 @@ can also be bundled with _resources_ (e.g. images, data…).
 _Item_ files include **scripts** in **lightweight scripting** languages that can
 customize their _presentation_ and _evaluation_.
 
-Currently, **Titsh** supports [Markdown](https://commonmark.org) (parsed by
-[pulldown-cmark]) markup with embedded [Rhai] scripts.
+First version of **Titsh** will likely support
+[Markdown](https://commonmark.org) (parsed by [pulldown-cmark]) markup with
+embedded [Rhai] scripts.
 
 ## Item Presentation
 
@@ -61,21 +65,22 @@ not only a **memory** app ; _presentation_ is responsible for handling the
 _acquisition_ phase, making the user understand a concept never studied before.
 
 For example, an _item_ about countries location can be _presented_ as an
-interactive map where the _user_ has to click the correct “shape”. A “reverse”,
-**linked** _item_ could highlight a country and ask the _user_ to select its
-name among some plausible ones. Or, an _item_ about equations could display each
-side as a plate of a balance scale, with factors as weights.
+interactive map where the user has to click the correct “shape”. A “reverse”,
+**linked** _item_ could highlight a country and ask the user to select its name
+among some plausible ones. Or, an _item_ about equations could display each side
+as a plate of a balance scale, with factors as weights ; creating an intuition
+of the preservation of equality.
 
 ## Item Answer Evaluation
 
-**Titsh** can make the _user_ auto-evaluate with classic
+**Titsh** can make the user auto-evaluate with classic
 [Anki](https://docs.ankiweb.net/studying.html#answer-buttons) “Again”, “Hard”,
 “Good” or “Easy” buttons.
 
 But **Titsh** prioritizes **active** and **performance-based** evaluation
-through custom _evaluation_, working in pair with the _presentation_.
+through custom _evaluation logic_, working in pair with the _presentation_.
 
-For example, the _item_ about countries location could _evaluate_ the _user_ :
+For example, the _item_ about countries location could _evaluate_ the user :
 
 - Correct shape/name, quickly (i.e. < 5s) → “Easy”
 - Correct shape/name, moderately (i.e. < 25s) → “Good”
@@ -88,7 +93,7 @@ For example, the _item_ about countries location could _evaluate_ the _user_ :
 before they are likely to be
 [forgotten](https://en.wikipedia.org/wiki/Forgetting_curve), to maximize
 **retention** while minimizing time spent _learning_, using the [FSRS] algorithm
-(with [fsrs-rs] implementation).
+(with [fsrs-rs] implementation) or a custom variant.
 
 ## Parametric Items
 
@@ -102,13 +107,14 @@ location, one _parametric item_ file can be used to generate all the necessary
 _items_ by variating its country name and “shape” _parameters_.
 
 Each _parametric item_ variant is identified by its path plus its parameters’
-values in **Titsh** internal SQLite database (via [sqlx]). _Parameters_ can be
-imported from files of supported data formats.
+values in **Titsh** internal database (likely [SQLite] via [sqlx]). _Parameters_
+can be imported from files of supported data formats.
 
 ## Items Repositories & Sharing
 
-**Titsh** can use _items_ from the local, on-disk _items repository_, or from
-remote HTTP _repositories_ (provided their URL) while keeping them up-to-date.
+**Titsh** stores _item_ files in a local, on-disk _items repository_. This
+repository can contain clones of other remote HTTP _repositories_ (provided
+their URL) ; **Titsh** will offer the user to sync them at startup.
 
 This allows to easily share _items repositories_ through a web or Git server.
 For now, it’s up to the user to find interesting and trustable _items
@@ -131,13 +137,13 @@ _items_ simultaneously as reviewed for the current session.
 ## Required References
 
 _Items_ can reference other _items_ or _tags_ as _required_ (or preliminary).
-Should a _user_ forget (“Again”) an _item_ two times in a row, **Titsh** will
+Should a user forget (“Again”) an _item_ two times in a row, **Titsh** will
 suggest _pausing_ it while learning the direct requirements, and continue
 _recursively_ if needed.
 
 **Titsh** encourages
 [goal-based](https://en.wikipedia.org/wiki/Project-based_learning) learning,
-starting from the _user’s_ desired **knowledge** or **skill** and getting the
+starting from the user’s desired **knowledge** or **skill** and getting the
 background only as strictly required.
 
 # Technical ~~Limitations~~ Simplicity
@@ -151,9 +157,8 @@ may grow in future versions if really needed.
 - YAML or TOML front-matter
 - Identified only by their paths, relative to the single _item repository_
 - Marked as “Lost” if file or _parameters_ not found / (re)moved
-  - _User_ can update “lost” _items’_ path or _parameters_, or definitively
-    remove
-  - Progress _tracking_ data is never deleted without explicit _user_ action
+  - User can update “lost” _items’_ path or _parameters_, or definitively remove
+  - Progress _tracking_ data is never deleted without explicit user action
   - Prompt to relink or remove when it should be reviewed
 
 ```markdown
@@ -172,7 +177,7 @@ params: [country-shape.json] # Map of country names to shapes
 
 - Restricted set of inputs
   - Whether the _item_ is reviewed or initially learned
-  - _User_ mouse or touchscreen events, text input
+  - User mouse or touchscreen events, text input
   - Date and time
   - Eventual attribute set of parameters (if params is set, parametric _item_)
   - Eventual resources (images, sounds…) declared in front-matter
@@ -236,7 +241,7 @@ if user_choice == params.get("name") {
 ```
 ````
 
-### Titsh Scripting API
+### **Titsh** Scripting API
 
 Objects provided from front-matter… <!-- TODO -->
 
@@ -305,7 +310,7 @@ CREATE TABLE item_tags(
 );
 ```
 
-The database only stores _tags_ created or modified by the _user_ in their own
+The database only stores _tags_ created or modified by the user in their own
 `tag` row, not _tags_ predefined in _items_ files. These, however, could be
 cached elsewhere if needed for performance.
 
@@ -323,6 +328,7 @@ cached elsewhere if needed for performance.
 [reStructuredText]: https://docutils.sourceforge.io/rst.html
 [Rhai]: https://github.com/rhaiscript/rhai
 [Steel]: https://github.com/mattwparas/steel
+[SQLite]: https://sqlite.org
 [mLua]: https://github.com/mlua-rs/mlua
 [Gleam]: https://github.com/gleam-lang/gleam
 [Boa]: https://github.com/boa-dev/boa
