@@ -7,20 +7,16 @@ lang: en-GB
 
 <!--toc:start-->
 
-- [Flexible & Powerful Items](#flexible-powerful-items)
-  - [Item Presentation](#item-presentation)
-  - [Item Answer Evaluation](#item-answer-evaluation)
-  - [Item Scheduling](#item-scheduling)
-  - [Parametric Items](#parametric-items)
-  - [Items Repositories & Sharing](#items-repositories-sharing)
-  - [Tagging](#tagging)
-  - [Required References](#required-references)
+- [Item Presentation](#item-presentation)
+- [Item Answer Evaluation](#item-answer-evaluation)
+- [Item Scheduling](#item-scheduling)
+- [Parametric Items](#parametric-items)
+- [Items Repositories & Sharing](#items-repositories-sharing)
+- [Tagging](#tagging)
+- [Required References](#required-references)
 - [Technical ~~Limitations~~ Simplicity](#technical-limitations-simplicity)
-  - [Read-only Source Item Files](#read-only-source-item-files)
+  - [Read-only Simple Text Source Item Files](#read-only-simple-text-source-item-files)
   - [Isolated and Stateless (Lightweight) Scripting Environment](#isolated-and-stateless-lightweight-scripting-environment)
-    - [Titsh Scripting API](#titsh-scripting-api)
-      - [threshold()](#threshold)
-  - [Simple & Lightweight Internal Database](#simple-lightweight-internal-database)
 
 <!--toc:end-->
 
@@ -53,9 +49,8 @@ can also be bundled with _resources_ (e.g. images, data…).
 _Item_ files include **scripts** in **lightweight scripting** languages that can
 customize their _presentation_ and _evaluation_.
 
-First version of **Titsh** will likely support
-[Markdown](https://commonmark.org) (parsed by [pulldown-cmark]) markup with
-embedded [Rhai] scripts.
+First version of **Titsh** will likely support [Markdown] (parsed by
+[pulldown-cmark]) for markup and [Rhai] for embedded scripts.
 
 ## Item Presentation
 
@@ -124,86 +119,102 @@ repositories_; a ranking system to quickly find high-quality ones is planned.
 
 _Items_ are organized flexibly with _tags_, not in rigid categories or folders.
 However, _tags_ can be hierarchical (e.g. `math/algebra/linear/`), and **Titsh**
-generates _item’s_ first _tag(s)_ from its path (relative to the _repository_).
+generates _item’s_ first (potentially nested) _tag_ from its containing
+directory hierarchy relative to the _repository_ root.
 
 The more _tags_ different _items_ share, the more **Titsh** see them as
 _related_ (or complementary). Therefore, **Titsh** can present them during
 review sessions to reinforce learning.
 
-Extremely _related_ _items_ may be considered different ways of presenting the
-same knowledge, and the _scheduling_ logic might decide to mark such related
-_items_ simultaneously as reviewed for the current session.
+Extremely _related_ _items_ (e.g. more than 90 % common tags) may be considered
+different ways of presenting the same knowledge, and the _scheduling_ logic
+might decide to mark such related _items_ simultaneously as reviewed for the
+current session.
 
 ## Required References
 
 _Items_ can reference other _items_ or _tags_ as _required_ (or preliminary).
-Should a user forget (“Again”) an _item_ two times in a row, **Titsh** will
-suggest _pausing_ it while learning the direct requirements, and continue
-_recursively_ if needed.
+Should a user forget (“Again”) an _item_ several (e.g. 2) times in a row,
+**Titsh** will suggest _pausing_ it while learning the direct requirements, and
+continue _recursively_ if needed.
 
-**Titsh** encourages
+Via this simple behaviour, **Titsh** encourages
 [goal-based](https://en.wikipedia.org/wiki/Project-based_learning) learning,
 starting from the user’s desired **knowledge** or **skill** and getting the
 background only as strictly required.
 
-# Technical ~~Limitations~~ Simplicity
+## Technical ~~Limitations~~ Simplicity
 
 **Titsh** is [kept simple](https://en.wikipedia.org/wiki/KISS_principle), but
 may grow in future versions if really needed.
 
-## Read-only Source Item Files
+**Titsh** stores and communicate data as in [`SCHEMA.md`](SCHEMA.md).
+
+**Titsh** offers [`SCRIPTING.md`](SCRIPTING.md) API to embedded scripts.
+
+### Read-only Simple Text Source Item Files
 
 - _Tracking_ entirely inside internal database
 - YAML or TOML front-matter
 - Identified only by their paths, relative to the single _item repository_
-- Marked as “Lost” if file or _parameters_ not found / (re)moved
-  - User can update “lost” _items’_ path or _parameters_, or definitively remove
+- Marked as _lost_ if file or _parameters_ not found / (re)moved
+  - User can update _lost_ _items’_ path or _parameters_, or definitively remove
   - Progress _tracking_ data is never deleted without explicit user action
   - Prompt to relink or remove when it should be reviewed
+- Could detect modifications and be able to suggest the most similar _item_ if
+  _lost_ by storing a [fuzzy hash] of it or leveraging Git similarity detection
 
 ```markdown
 ---
+lang: en-GB
 requires: [Reading/English]
 tags:
-  - Item/English
-  - Geography/Countries/France
-  - Countries/France
-ressources: [worldMap.png]
-params: [country-shape.json] # Map of country names to shapes
+  # From path: Geography/Countries/Shape
+  # From lang: English
+  # From presence of ressources/params: Parametric
+  - $params.0.key #< Country name from country_shape.json
+  - Method/Visual
+  - Easy
+  - …
+ressources: [world_map.png]
+params: [country_shape.json] # Map of country names to shapes
 ---
+
+# Select $params.0.key on the map
+
+…
 ```
 
-## Isolated and Stateless (Lightweight) Scripting Environment
+### Isolated and Stateless (Lightweight) Scripting Environment
 
 - Restricted set of inputs
-  - Whether the _item_ is reviewed or initially learned
+  - _Item’s_ review count (0 of initially learned)
   - User mouse or touchscreen events, text input
-  - Date and time
+  - Current date and time
   - Eventual attribute set of parameters (if params is set, parametric _item_)
   - Eventual resources (images, sounds…) declared in front-matter
 - Very restricted set of outputs
   - Rendered object displayed in place of the code block
   - Eventual sound played to the user
-  - _Evaluation_ enum : “Again”, “Hard”, “Good”, “Easy”
+  - _Evaluation_ enum: “Again”, “Hard”, “Good”, “Easy”
 
 ````markdown
-# Country Name
+…
+
+# Select $params.0.key on the map
 
 ```rhai presentation
+# TODO define simple API, use it here
 # Titsh provides a 'params' object for parametric items
 let country_name = params.get("name"); 
 let country_shape = params.get("shape_id");
-
-# 1. Create a container for the map
+# Create a container for the map
 let map_container = create_element("div");
-
-# 2. Load the resource declared in front-matter
-let world_map = load_resource("worldMap.png");
-
-# 3. Render the map with a highlight filter on the specific shape
+# Load the resource declared in front-matter
+let world_map = load_resource("world_map.png");
+# Render the map with a highlight filter on the specific shape
 # 'render_svg_overlay' is a hypothetical Titsh helper function
 let rendered_content = render_svg_overlay(world_map, country_shape, "#{fill: 'white'; opacity: 0.8}");
-
 # Return the object to be displayed in the UI
 rendered_content;
 ```
@@ -241,97 +252,29 @@ if user_choice == params.get("name") {
 ```
 ````
 
-### **Titsh** Scripting API
-
-Objects provided from front-matter… <!-- TODO -->
-
-#### threshold()
-
-<!-- TODO -->
-
-## Simple & Lightweight Internal Database
-
-| _Item_ field     | Type               | Description                                      |
-| ---------------- | ------------------ | ------------------------------------------------ |
-| Key : `id`       | `INTEGER`          | Technical unique identifier of the _item_        |
-| `url`            | `TEXT NOT NULL`    | File path or HTTP(S) URL of the _item_           |
-| `parameters`     | `JSON`             | Parameters for parametric _items_                |
-| `stability`      | `REAL NOT NULL`    | (FSRS) stability metric                          |
-| `difficulty`     | `REAL NOT NULL`    | (FSRS) difficulty metric                         |
-| `elapsed_days`   | `INTEGER NOT NULL` | Days since last review                           |
-| `scheduled_days` | `INTEGER NOT NULL` | Days until next scheduled review                 |
-| `reps`           | `INTEGER NOT NULL` | Number of repetitions                            |
-| `lapses`         | `INTEGER NOT NULL` | Number of lapses                                 |
-| `state`          | `INTEGER NOT NULL` | Learning state, 0-3: New, Learn, Review, Relearn |
-| `review`         | `DATETIME`         | Date (and time) of the last _item’s_ review      |
-| `creation`       | `DATETIME`         | Date (and time) of the _item’s_ creation         |
-
-| _Tag_ field | Type            | Description                                 |
-| ----------- | --------------- | ------------------------------------------- |
-| Key : `id`  | `INTEGER`       | Technical unique identifier of the _tag_    |
-| `name`      | `TEXT NOT NULL` | Name of the _tag_                           |
-| `parent`    | `INTEGER`       | ID of the parent _tag_, null if root        |
-| `retention` | `INTEGER < 256` | Desired last 50 % of retention factor       |
-| `weights`   | `JSON`          | (FSRS) 'w' array (e.g., [0.4, 0.6, 2.4, …]) |
-
-```sqlite
-CREATE TABLE item(
-  id INTEGER PRIMARY KEY AUTOINCREMENT, -- Technical
-  url TEXT NOT NULL,        -- file://… | http://… | https://…
-  parameters JSON NOT NULL, -- JSON attribute set of parametric item parameters
-  stability REAL NOT NULL DEFAULT 0,    -- FSRS Stability
-  difficulty REAL NOT NULL DEFAULT 0,   -- FSRS Difficulty
-  elapsed INTEGER NOT NULL DEFAULT 0,   -- FSRS Elapsed Days
-  scheduled INTEGER NOT NULL DEFAULT 0, -- FSRS Scheduled Days
-  reps INTEGER NOT NULL DEFAULT 0,      -- FSRS Repetitions
-  lapses INTEGER NOT NULL DEFAULT 0,    -- FSRS Lapses
-  state INTEGER NOT NULL DEFAULT 0 CHECK (state < 4), -- FSRS Learning State
-  review DATETIME,                             -- Last review date
-  creation DATETIME DEFAULT CURRENT_TIMESTAMP, -- Initial creation date
-  UNIQUE(url, parameters)
-);
-
-CREATE TABLE tag(
-  id INTEGER PRIMARY KEY AUTOINCREMENT, -- Technical
-  name TEXT NOT NULL, -- Actual text of the tag
-  parent INTEGER, -- ID of the parent tag, null if root tag
-  retention INTEGER CHECK (retention < 256), -- (retention + 256) / 511
-  weights JSON, -- FSRS 'w' array, to optimize sometimes
-  FOREIGN KEY (parent) REFERENCES tag(id) ON DELETE CASCADE,
-  UNIQUE(name, parent) -- Prevents duplicate children under the same parent
-);
-
-CREATE TABLE item_tags(
-  item INTEGER NOT NULL, -- Many-to-many relationship
-  tag INTEGER NOT NULL,  -- between items and tags
-  PRIMARY KEY (item, tag),
-  FOREIGN KEY (item) REFERENCES item(id) ON DELETE CASCADE,
-  FOREIGN KEY (tag) REFERENCES tag(id) ON DELETE CASCADE
-);
-```
-
-The database only stores _tags_ created or modified by the user in their own
-`tag` row, not _tags_ predefined in _items_ files. These, however, could be
-cached elsewhere if needed for performance.
-
 [Rust]: https://rust-lang.org
 [Dioxus]: https://dioxuslabs.com
 [FSRS]: https://github.com/open-spaced-repetition/fsrs4anki/wiki/The-Algorithm
 [fsrs-rs]: https://github.com/open-spaced-repetition/fsrs-rs
-[sqlx]: https://github.com/launchbadge/sqlx
-[serde]: https://github.com/serde-rs/serde
-[gray-matter]: https://github.com/yuchanns/gray-matter-rs
-[pulldown-cmark]: https://github.com/pulldown-cmark/pulldown-cmark
 [AsciiDoc]: https://asciidoc.org
-[Typst]: https://typst.app
-[Typst Core]: https://github.com/typst/typst
-[reStructuredText]: https://docutils.sourceforge.io/rst.html
+[Boa]: https://github.com/boa-dev/boa
+[CommonMark]: https://commonmark.org
+[Markdown]: https://commonmark.org
+[fuzzyhash-rs]: https://github.com/rustysec/fuzzyhash-rs
+[Gleam]: https://github.com/gleam-lang/gleam
+[gray-matter]: https://github.com/yuchanns/gray-matter-rs
+[Lua]: https://www.lua.org
+[Luau]: https://luau.org
+[mLua]: https://github.com/mlua-rs/mlua
+[pulldown-cmark]: https://github.com/pulldown-cmark/pulldown-cmark
 [Rhai]: https://github.com/rhaiscript/rhai
+[RustPython]: https://github.com/RustPython/RustPython
+[reStructuredText]: https://docutils.sourceforge.io/rst.html
 [Steel]: https://github.com/mattwparas/steel
 [SQLite]: https://sqlite.org
-[mLua]: https://github.com/mlua-rs/mlua
-[Gleam]: https://github.com/gleam-lang/gleam
-[Boa]: https://github.com/boa-dev/boa
-[RustPython]: https://github.com/RustPython/RustPython
+[sqlx]: https://github.com/launchbadge/sqlx
+[serde]: https://github.com/serde-rs/serde
+[Typst]: https://typst.app
+[Typst Core]: https://github.com/typst/typst
 [Wasmi]: https://github.com/wasmi-labs/wasmi
 [WasmTime]: https://github.com/bytecodealliance/wasmtime
