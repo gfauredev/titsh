@@ -71,8 +71,8 @@ of the preservation of equality.
 ## Item Answer Evaluation
 
 **Titsh** can make the user auto-evaluate with classic
-[Anki](https://docs.ankiweb.net/studying.html#answer-buttons) “Again”, “Hard”,
-“Good” or “Easy” buttons.
+[Anki-like](https://docs.ankiweb.net/studying.html#answer-buttons) “Again”,
+“Hard”, “Good” or “Easy” buttons.
 
 But **Titsh** prioritizes **active** and **performance-based** evaluation
 through custom _evaluation logic_, working in pair with the _presentation_.
@@ -86,7 +86,7 @@ For example, the _item_ about countries location could _evaluate_ the user :
 
 ## Item Scheduling
 
-**Titsh** schedules _item_ [just](https://en.wikipedia.org/wiki/Spacing_effect)
+**Titsh** schedules _items_ [just](https://en.wikipedia.org/wiki/Spacing_effect)
 before they are likely to be
 [forgotten](https://en.wikipedia.org/wiki/Forgetting_curve), to maximize
 **retention** while minimizing time spent _learning_, using the [FSRS] algorithm
@@ -101,7 +101,7 @@ differ. In that case, each “virtual” _item_ is _tracked_ independently.
 
 For example, instead of writing ~200 very similar _items_ about countries
 location, one _parametric item_ file can be used to generate all the necessary
-_items_ by variating its country name and “shape” _parameters_.
+_items_ by variating its country name and “shape/position” _parameters_.
 
 _Parameters_ themselves are a dictionary (or map) written in a textual data
 format (e.g. JSON, YAML, TOML…), where the key is the _variant item’s_ name (or
@@ -125,7 +125,7 @@ can be imported from files of supported data formats.
 **Titsh** stores _item_ files in an on-disk _items repository_. Remote
 _repositories_ can be cloned (via bare HTTP download or `git clone`) in
 subdirectories of it, and _items_ they contain will be picked as any other by
-**Titsh**. A button allows to user to fetch updates.
+**Titsh**. A button offers the user to fetch updates.
 
 This allows to easily share _items repositories_ through a web or Git server.
 For now, it’s up to the user to find interesting and trustable _items
@@ -134,9 +134,11 @@ repositories_; a ranking system to quickly find high-quality ones is planned.
 ## Tagging
 
 _Items_ are organized flexibly with _tags_, not in rigid categories or folders.
-However, _tags_ can be hierarchical (e.g. `math/algebra/linear/`), and **Titsh**
+However, _tags_ can be hierarchical (e.g. `math/algebra/linear`), and **Titsh**
 generates _item’s_ first (potentially nested) _tag_ from its containing
 directory hierarchy, relative to the _repository_ root.
+
+> In search and matching, _tags_ are case-insensitive
 
 The more _tags_ different _items_ share, the more **Titsh** see them as
 _related_ (or complementary). Therefore, **Titsh** can present them during
@@ -144,10 +146,10 @@ review sessions to reinforce learning.
 
 Extremely _related_ _items_ (e.g. more than 90 % common tags) may be considered
 different ways of presenting the same knowledge, and the _scheduling_ logic
-might decide to mark such related _items_ simultaneously as reviewed for the
+might decide to simultaneously mark such related _items_ as reviewed for the
 current session.
 
-## Required References
+## Required References & Knowledge Discovery
 
 _Items_ can reference other _items_ or _tags_ as _required_ (or preliminary).
 Should a user forget (“Again”) an _item_ several (e.g. 2) times in a row,
@@ -161,6 +163,8 @@ background only as strictly required.
 
 Reversely, when all requirements of a _paused_ _item_ are remembered correctly
 several times in a row, the _paused_ _item_ is automatically reactivated.
+
+> This could also be based on FSRS parameters thresholds
 
 ## Technical ~~Limitations~~ Simplicity
 
@@ -208,7 +212,7 @@ timeout: 60 # Default timeout in seconds, can be changed if user needs
 ### Isolated and Stateless (Lightweight) Scripting Environment
 
 - Restricted set of inputs
-  - _Item’s_ review count (0 of initially learned)
+  - _Item’s_ review count (0 for initially learned)
   - _Item’s_ current stability: days required for the probability of recalling
     that specific card to drop from 100 % to 90 %
   - _Item’s_ current difficulty: how inherently complex the card's concept is,
@@ -222,7 +226,7 @@ timeout: 60 # Default timeout in seconds, can be changed if user needs
   - Eventual resources (images, sounds…) made available in front-matter
 - Very restricted set of outputs
   - Rendered object(s) displayed in place of the code block
-  - Eventual sound played to the user
+  - Eventual sound played to the user (in reaction to a click in the block area)
   - _Evaluation_ enum: “Again”, “Hard”, “Good”, “Easy”, “Skip”
 
 ````markdown
@@ -243,6 +247,11 @@ timeout: 60 # Default timeout in seconds, can be changed if user needs
 # Return "Good" if clicked in less than timeout/2
 # Return "Hard" otherwise
 ```
+
+Did you knew?:\
+There is no universal agreement on the number of "countries" in the world.
+Several countries are not being recognized as sovereign states by the UN system,
+but are recognized by at least one UN member.
 ````
 
 ## Licensing and Credits
