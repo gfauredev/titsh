@@ -251,7 +251,7 @@ ui::col([
 # Return "Easy" if clicked in less than 5s
 # Return "Good" if clicked in less than 25s
 # Return "Hard" otherwise
-if distance(state.click, params.coords) < 10.0 {
+if contains(params.border, state.click) {
     if time < 5.0 { return Grade::Easy; }
     if time < 25.0 { return Grade::Good; }
     return Grade::Hard;

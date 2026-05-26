@@ -5,6 +5,7 @@ lang: en-GB
 <!--toc:start-->
 
 - [Shared Context](#shared-context)
+- [Parametric Data](#parametric-data)
 - [Presentation API (`rhai presentation`)](#presentation-api-rhai-presentation)
   - [Reactive UI](#reactive-ui)
   - [Inline Evaluation](#inline-evaluation)
@@ -37,6 +38,26 @@ These variables are available in both `presentation` and `evaluation` blocks.
 | `date`     | `?`         | Current date                                    |
 | `time`     | `?`         | Current time                                    |
 | `datetime` | `?`         | Current date and time                           |
+
+## Parametric Data
+
+For parametric items, `params` is the object associated with the current variant
+in your data file.
+
+**Example Data (`countries.json`):**
+
+```json
+{
+  "France": {
+    "capital": "Paris",
+    "border": [[10, 20], [15, 25], [10, 25]]
+  }
+}
+```
+
+When learning the "France" variant, `params.capital` will be `"Paris"` and
+`params.border` will be the array of points. This allows you to name your fields
+whatever makes sense for your item, making your scripts more readable.
 
 ## Presentation API (`rhai presentation`)
 
@@ -99,34 +120,18 @@ timeout occurs. It **must return** a `Grade`.
 
 ## Built-in Helpers
 
-| Function           | Description                                         |
-| :----------------- | :-------------------------------------------------- |
-| `distance(p1, p2)` | Euclidean distance between two points `[x, y]`      |
-| `evaluate()`       | Triggers the `evaluation` block to decide the grade |
-| `evaluate(grade)`  | Submits a specific `Grade` immediately              |
-| `random()`         | Returns a random float between 0.0 and 1.0          |
+| Function            | Description                                         |
+| :------------------ | :-------------------------------------------------- |
+| `distance(p1, p2)`  | Euclidean distance between two points `[x, y]`      |
+| `contains(poly, p)` | `true` if point `p` is inside the polygon `poly`    |
+| `evaluate()`        | Triggers the `evaluation` block to decide the grade |
+| `evaluate(grade)`   | Submits a specific `Grade` immediately              |
+| `random()`          | Returns a random float between 0.0 and 1.0          |
 
 ## Examples
 
-### Interactive Map
-
-```rhai presentation
-ui::col([
-    ui::text("Where is " + params.country + "?"),
-    ui::image("world_map.svg").on_click(|x, y| {
-        state.click = [x, y];
-        evaluate();
-    })
-])
-```
-
-```rhai evaluation
-if distance(state.click, params.coords) < 10.0 {
-    if time < 5.0 { return Grade::Easy; }
-    if time < 25.0 { return Grade::Good; }
-    return Grade::Hard;
-}
-return Grade::Again;
-```
+TODO an _item_ about equations that displays each side as a plate of a balance
+scale, with factors as weights ; creating an intuition of the preservation of
+equality.
 
 [Rhai]: https://rhai.rs
