@@ -194,12 +194,12 @@ requires: [Reading/English]
 tags:
   # From path: Geography/Countries/Shape
   # From lang: English
-  # From presence of ressources/params: Parametric
+  # From presence of resources/params: Parametric
   # From params dict: country name, e.g. France
   - Method/Visual
   - Easy
   - …
-ressources: [world_map.svg] # Files accessible from scripts
+resources: [world_map.svg] # Files accessible from scripts
 params: country_shape.json # Map of country names to shapes
 timeout: 60 # Default timeout in seconds, can be changed if user needs
 ---
