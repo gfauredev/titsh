@@ -199,7 +199,7 @@ tags:
   - Method/Visual
   - Easy
   - …
-ressources: [world_map.png] # Files accessible from scripts
+ressources: [world_map.svg] # Files accessible from scripts
 params: country_shape.json # Map of country names to shapes
 timeout: 60 # Default timeout in seconds, can be changed if user needs
 ---
@@ -235,17 +235,28 @@ timeout: 60 # Default timeout in seconds, can be changed if user needs
 # Select a country on the map by its name
 
 ```rhai presentation
-# TODO define simple API in SCRIPTING.md, use it in example script below
 # Display the name of the country we’re searching
 # Display a world map with clickable countries, random centering
+ui::col([
+    ui::text("Where is " + params.country + "?"),
+    ui::image("world_map.svg").on_click(|x, y| {
+        state.click = [x, y];
+        evaluate();
+    })
+])
 ```
 
 ```rhai evaluation
 # Return "Again" if wrong country shape clicked
-## Automatic "Again" if timeout reached before evaluation returns
-# Return "Easy" if clicked in less than timeout/8
-# Return "Good" if clicked in less than timeout/2
+# Return "Easy" if clicked in less than 5s
+# Return "Good" if clicked in less than 25s
 # Return "Hard" otherwise
+if distance(state.click, params.coords) < 10.0 {
+    if time < 5.0 { return Grade::Easy; }
+    if time < 25.0 { return Grade::Good; }
+    return Grade::Hard;
+}
+return Grade::Again;
 ```
 
 Did you knew?:\
