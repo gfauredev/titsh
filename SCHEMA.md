@@ -5,6 +5,16 @@ lang: en-GB
 <!-- > **Bold** Learning, education, memory or technical concepts\ -->
 <!-- > _Italic_ Titsh specific concepts or features -->
 
+<!--toc:start-->
+
+- [Item Table](#item-table)
+  - [Item Cache Table](#item-cache-table)
+- [Review Table](#review-table)
+- [Tag Table](#tag-table)
+  - [Tagging Table](#tagging-table)
+
+<!--toc:end-->
+
 # Titsh’s Simple & Lightweight Internal Database
 
 > Each field is defined by a paragraph or two with its name, type, description
@@ -50,7 +60,7 @@ CREATE TABLE item(
 );
 ```
 
-## Item Cache Table
+### Item Cache Table
 
 Computable data stored separately for performance. Can be cleared and rebuilt by
 scanning the item repository. Shouldn’t be backed-up or copied across systems.
@@ -118,7 +128,7 @@ CREATE TABLE tag(
 );
 ```
 
-## Tagging Table
+### Tagging Table
 
 Many-to-many relationship between items and tags. Required to find related items
 (by shared tags) or to query items by their categories.
