@@ -8,20 +8,20 @@ lang: en-GB
 # Titsh’s Simple & Lightweight Internal Database
 
 > Each field is defined by a paragraph or two with its name, type, description
-> and argument(s) about why it is required
+> and argument(s) about why it is required (except purely technical ones)
 
 ## Item Table
 
-`path`: `TEXT`. Relative file path to the item file in the item repository,
+`path`: `TEXT`. File path to the item file relative to the item repository root,
 required to locate the source file and identify the item.
 
 `variant_key`: `TEXT`. Optional key for parametric items (the key in the
-`params` map). Uniquely identifies a variant together with `path`.
+`params` map) which uniquely identifies a variant together with `path`.
 
 `params`: `TEXT` (`JSON`). Parameter values to detect modifications by comparing
 with current file content and to show the user what changed.
 
-`paused`: `BOOLEAN`. 1 if the user manually paused the item.
+`paused`: `BOOLEAN`. 1 (true) if the user manually paused the item.
 
 `reviews`: `INTEGER`. Number of times the item was reviewed, starting at 0 for
 newly learned items. Required by the embedded scripting APIs and FSRS algorithm.
@@ -55,20 +55,21 @@ CREATE TABLE item(
 Computable data stored separately for performance. Can be cleared and rebuilt by
 scanning the item repository. Shouldn’t be backed-up or copied across systems.
 
-`sync_status`: `TEXT`. Result of the last file-system integrity check.
+`status`: `TEXT`. Result of the last file-system integrity check for that item.
 
-- `lost`: File not found at `path`.
-- `modified`: File exists but params differ from `item.params` (or fuzzy hash
-  differs).
+- `lost`: File not found at `path`
+- `modified`: File exists but differs from what stored internally
+  - Params differ from `item.params`
+  - Eventually, fuzzy hash differs from text file
 
-`last_synced`: `DATETIME`. When the file was last checked, allows background
-sync to target "stale" entries.
+`synced`: `DATETIME`. When the file was last checked, allows background sync to
+target "stale" entries.
 
 ```sqlite item cache table
 CREATE TABLE item_cache(
   item INTEGER PRIMARY KEY,
-  sync_status TEXT, -- 'lost' or 'modified', NULL if nothing to report
-  last_synced DATETIME NOT NULL,
+  status TEXT, -- 'lost' or 'modified', NULL if nothing to report
+  synced DATETIME NOT NULL,
   FOREIGN KEY(item) REFERENCES item(id) ON DELETE CASCADE
 );
 ```
