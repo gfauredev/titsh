@@ -13,7 +13,7 @@ lang: en-GB
 - [Parametric Items](#parametric-items)
 - [Items Repositories & Sharing](#items-repositories-sharing)
 - [Tagging](#tagging)
-- [Required References](#required-references)
+- [Required References & Discovery](#required-references-discovery)
 - [Technical ~~Limitations~~ Simplicity](#technical-limitations-simplicity)
   - [Read-only Simple Text Source Item Files](#read-only-simple-text-source-item-files)
   - [Isolated and Stateless (Lightweight) Scripting Environment](#isolated-and-stateless-lightweight-scripting-environment)
@@ -57,9 +57,14 @@ First version of **Titsh** will likely support [Markdown] (parsed by
 
 In **Titsh**, an _item’s_ _presentation_ is more than static content ; it adds
 **interactivity** and **dynamic elements** to optimize learning. **Titsh** is
-not only a **memory** app ; _presentation_ is considered responsible for
-handling the _acquisition_ phase if needed (e.g. if review count is 0), making
-the user understand a concept never studied before.
+not only a **memory** app ; _presentation_ script can be tasked with handling
+the _acquisition_ phase if needed (e.g. if review count is 0), making the user
+understand a concept never studied before.
+
+> **Titsh** tries to stay accessible by offering a great range of abstraction
+> levels. A simple and intuitive syntax allows writing simple _items_ (e.g.
+> [Markdown]) while it’s possible to escalate to a more comprehensive and
+> powerful one for more complex and layout heavy _items_ (e.g. [Typst]).
 
 For example, an _item_ about countries location can be _presented_ as an
 interactive map where the user has to click the correct “shape”. A “reverse”,
@@ -83,6 +88,10 @@ For example, the _item_ about countries location could _evaluate_ the user :
 - Correct shape/name, moderately (i.e. < 25s) → “Good”
 - Correct shape/name, slowly (i.e. > 25s) → “Hard”
 - Incorrect shape/name, or none after timeout (i.e. 90s) → “Again”
+
+**Titsh** uses code blocks of interpreted languages (e.g. [Rhai]) for embedded
+**evaluation logic**. Scripts can access the current session `state`, review
+history, and performance metrics to calculate a `Grade`.
 
 ## Item Scheduling
 
@@ -149,7 +158,7 @@ different ways of presenting the same knowledge, and the _scheduling_ logic
 might decide to simultaneously mark such related _items_ as reviewed for the
 current session.
 
-## Required References & Knowledge Discovery
+## Required References & Discovery
 
 _Items_ can reference other _items_ or _tags_ as _required_ (or preliminary).
 Should a user forget (“Again”) an _item_ several (e.g. 2) times in a row,
