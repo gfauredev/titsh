@@ -36,49 +36,47 @@ _item_ review. Code that reads `state` becomes reactive, updated each time
 Additionally, **Typst** and **Rhai** (`evaluation`) code have access to
 read-only context.
 
-<!-- TODO Replace below types with proper Rhai types -->
-
-| Constant | Type            | Description                               |
-| :------- | :-------------- | ----------------------------------------- |
-| `params` | `TEXT` (`JSON`) | Parameter values for the current variant  |
-| `chrono` | `DURATION`      | Time elapsed since the item was displayed |
-| `date`   | `DATETIME`      | Current (localized) date and time         |
+| Constant | Type        | Description                               |
+| :------- | :---------- | ----------------------------------------- |
+| `params` | `map`       | Parameter values for the current variant  |
+| `chrono` | `float`     | Time elapsed since the item was displayed |
+| `date`   | `timestamp` | Current (localized) date and time         |
 
 ### Item Table Map
 
 Accessed under `item` object.
 
-| Constant      | Type            | Description                                |
-| :------------ | :-------------- | ------------------------------------------ |
-| `path`        | `TEXT`          | File path relative to item repository root |
-| `variant_key` | `TEXT`          | Key in the `params` map                    |
-| `params`      | `TEXT` (`JSON`) | Parameter values                           |
-| `paused`      | `BOOLEAN`       | 1 if the user manually paused the item     |
-| `reviews`     | `INTEGER`       | Number of reviews (0 for newly learned)    |
-| `stability`   | `REAL`          | FSRS stability metric                      |
-| `difficulty`  | `REAL`          | FSRS inherent complexity metric            |
-| `due`         | `DATETIME`      | Scheduled date and time for next review    |
+| Constant      | Type        | Description                                |
+| :------------ | :---------- | ------------------------------------------ |
+| `path`        | `string`    | File path relative to item repository root |
+| `variant_key` | `string`    | Key in the `params` map                    |
+| `params`      | `map`       | Parameter values                           |
+| `paused`      | `bool`      | 1 if the user manually paused the item     |
+| `reviews`     | `int`       | Number of reviews (0 for newly learned)    |
+| `stability`   | `float`     | FSRS stability metric                      |
+| `difficulty`  | `float`     | FSRS inherent complexity metric            |
+| `due`         | `timestamp` | Scheduled date and time for next review    |
 
 ### Review Table Map
 
 Accessed under `review` list, each element being an object with two fields.
 
-| Constant     | Type       | Description                           |
-| :----------- | :--------- | ------------------------------------- |
-| `reviewed`   | `DATETIME` | Date and time the evaluation occurred |
-| `evaluation` | `TEXT`     | `Again`, `Hard`, `Good`, `Easy`       |
+| Constant     | Type        | Description                           |
+| :----------- | :---------- | ------------------------------------- |
+| `reviewed`   | `timestamp` | Date and time the evaluation occurred |
+| `evaluation` | `string`    | `Again`, `Hard`, `Good`, `Easy`       |
 
 ### Tag Table Map
 
 Accessed under `tag` list, each element being an object with two fields.
 
-> _Tags_ explicitly defined in the _item_ file’s front-matter are not included
+> _Tags_ explicitly defined in the _item_ file’s front-matter are not included |
 > in this list
 
-| Constant | Type   | Description              |
-| :------- | :----- | ------------------------ |
-| `name`   | `TEXT` | Name of the tag          |
-| `parent` | `TEXT` | Name of the tag’s parent |
+| Constant | Type     | Description              |
+| :------- | :------- | ------------------------ |
+| `name`   | `string` | Name of the tag          |
+| `parent` | `string` | Name of the tag’s parent |
 
 ## Presentation API
 
@@ -161,7 +159,33 @@ This example uses Typst for the visual "Physics" and Rhai for the logic.
   #place(dx: -150pt)[
     #line(start: (0pt, 0pt), end: (0pt, 60pt), stroke: gray)
     #move(dy: 60pt, rect(width: 80pt, height: 10pt, fill: silver))
-    // TODO Complete, with draggable weights, different colors for different variables
+    
+    // Left Weights
+    #place(dx: 40pt, dy: 60pt, alignment: bottom)[
+      #for (i, mass) in left.enumerate() {
+        let colors = (red, green, blue, yellow, orange, purple)
+        let c = colors.at(calc.rem(i, colors.len()))
+        titsh.draggable("left-" + str(i), 
+          rect(width: mass * 5pt, height: 20pt, fill: c, stroke: 1pt + black)[#mass]
+        )
+      }
+    ]
+  ]
+  
+  #place(dx: 150pt)[
+    #line(start: (0pt, 0pt), end: (0pt, 60pt), stroke: gray)
+    #move(dy: 60pt, rect(width: 80pt, height: 10pt, fill: silver))
+    
+    // Right Weights
+    #place(dx: 40pt, dy: 60pt, alignment: bottom)[
+      #for (i, mass) in right.enumerate() {
+        let colors = (cyan, magenta, olive, navy, maroon, teal)
+        let c = colors.at(calc.rem(i, colors.len()))
+        titsh.draggable("right-" + str(i),
+          rect(width: mass * 5pt, height: 20pt, fill: c, stroke: 1pt + black)[#mass]
+        )
+      }
+    ]
   ]
 ]
 ```

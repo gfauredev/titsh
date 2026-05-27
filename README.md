@@ -244,20 +244,40 @@ timeout: 60 # Default timeout in seconds, can be changed if user needs
 # Select a country on the map by its name
 
 ```typst presentation
-// Display the name of the country we’re searching
-// Display a world map with clickable countries, random centering
-// TODO Using Titsh’s Typst interactivity API
+#import "titsh"
+
+#let target = params.at("name", default: "France")
+#let center = state.at("center", default: (0, 0))
+
+#align(center)[
+  #text(1.5em)[Find *#target* on the map]
+  
+  #box(clip: true, width: 100%, height: 300pt)[
+    #move(dx: center.at(0), dy: center.at(1))[
+      #titsh.action("map_click")[
+        #image("world_map.svg", width: 2000pt)
+      ]
+    ]
+  ]
+]
 ```
 
 ```rhai evaluation
-# Return "Again" if wrong country shape clicked
-# Return "Easy" if clicked in less than 5s
-# Return "Good" if clicked in less than 25s
-# Return "Hard" otherwise
-# TODO Using Titsh’s Rhai evaluation API
+let clicked = state.clicked_country;
+let target = params.name;
+
+if clicked == target {
+    if chrono < 5.0 { return Grade::Easy; }
+    if chrono < 25.0 { return Grade::Good; }
+    return Grade::Hard;
+}
+
+if clicked != "" {
+    return Grade::Again;
+}
 ```
 
-Did you knew?:\
+Did you know?:\
 There is no universal agreement on the number of "countries" in the world.
 Several countries are not being recognized as sovereign states by the UN system,
 but are recognized by at least one UN member.
