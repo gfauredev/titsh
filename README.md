@@ -119,8 +119,6 @@ identifier), and the value is the variating data used by the embedded scripts.
 _Parameters_ can be placed into the front-matter or imported from a separate
 file.
 
-<!-- They can also be a bare list (or array), where each element is the _variant item’s_ defining data. -->
-
 > When user starts learning (views for the first time without skipping) a
 > parametric _item_ _variant_, **Titsh** copies its parameters into its internal
 > database. This way, a change or removal can be detected, and the user safely
@@ -245,16 +243,10 @@ timeout: 60 # Default timeout in seconds, can be changed if user needs
 
 # Select a country on the map by its name
 
-```rhai presentation
-# Display the name of the country we’re searching
-# Display a world map with clickable countries, random centering
-ui::col([
-    ui::text("Where is " + params.country + "?"),
-    ui::image("world_map.svg").on_click(|x, y| {
-        state.click = [x, y];
-        evaluate();
-    })
-])
+```typst presentation
+// Display the name of the country we’re searching
+// Display a world map with clickable countries, random centering
+// TODO Using Titsh’s Typst interactivity API
 ```
 
 ```rhai evaluation
@@ -262,12 +254,7 @@ ui::col([
 # Return "Easy" if clicked in less than 5s
 # Return "Good" if clicked in less than 25s
 # Return "Hard" otherwise
-if contains(params.border, state.click) {
-    if time < 5.0 { return Grade::Easy; }
-    if time < 25.0 { return Grade::Good; }
-    return Grade::Hard;
-}
-return Grade::Again;
+# TODO Using Titsh’s Rhai evaluation API
 ```
 
 Did you knew?:\

@@ -30,7 +30,8 @@ module with primitives for interactive UI components is provided inside [Typst]
 
 Both **Typst** and **Rhai** (`evaluation`) code can read and write session data
 to the global `state` object, shared across each code block of the current
-_item_ review.
+_item_ review. Code that reads `state` becomes reactive, updated each time
+`state` changes.
 
 Additionally, **Typst** and **Rhai** (`evaluation`) code have access to
 read-only context.
