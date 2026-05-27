@@ -50,8 +50,9 @@ can also be bundled with _resources_ (e.g. images, data…).
 _Item_ files include **scripts** in **lightweight scripting** languages that can
 customize their _presentation_ and _evaluation_.
 
-First version of **Titsh** will likely support [Markdown] (parsed by
-[pulldown-cmark]) for markup and [Rhai] for embedded scripts.
+First version of **Titsh** supports [Markdown] (parsed by [pulldown-cmark]) for
+simple markup, [Typst] (embedded) for advanced layout and formatting, and [Rhai]
+for embedded scripts.
 
 ## Item Presentation
 
@@ -70,8 +71,8 @@ For example, an _item_ about countries location can be _presented_ as an
 interactive map where the user has to click the correct “shape”. A “reverse”,
 **linked** _item_ could highlight a country and ask the user to select its name
 among some plausible ones. Or, an _item_ about equations could display each side
-as a plate of a balance scale, with factors as weights ; creating an intuition
-of the preservation of equality.
+as a plate of a [balance scale](SCRIPTING.md#balance-scale-typst-rhai), with
+factors as weights ; creating an intuition of the preservation of equality.
 
 ## Item Answer Evaluation
 
@@ -126,8 +127,9 @@ file.
 > asked how to handle it.
 
 Each _parametric item_ variant is identified by its path plus its parameters’
-values in **Titsh** internal database (likely [SQLite] via [sqlx]). _Parameters_
-can be imported from files of supported data formats.
+values in **Titsh** internal database (initially [SQLite] via [sqlx]).
+_Parameters_ can be imported from files of supported data formats (initially
+[JSON] variants, [YAML], [TOML]).
 
 ## Items Repositories & Sharing
 
@@ -306,6 +308,7 @@ but are recognized by at least one UN member.
 [GitHub Flow]: https://githubflow.github.io
 [Helix]: https://helix-editor.com
 [IndexedDB]: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
+[JSON]: https://www.json.org
 [Lua]: https://www.lua.org
 [Luau]: https://luau.org
 [lcov]: https://github.com/linux-test-project/lcov
@@ -319,7 +322,7 @@ but are recognized by at least one UN member.
 [pwa]: https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps
 [pagespeed insights]: https://pagespeed.web.dev
 [pulldown-cmark]: https://github.com/pulldown-cmark/pulldown-cmark
-[Rhai]: https://github.com/rhaiscript/rhai
+[Rhai]: https://rhai.rs
 [RustPython]: https://github.com/RustPython/RustPython
 [Rust]: https://rust-lang.org
 [reStructuredText]: https://docutils.sourceforge.io/rst.html
@@ -338,6 +341,7 @@ but are recognized by at least one UN member.
 [serde]: https://github.com/serde-rs/serde
 [SemVer]: https://semver.org
 [Serde]: https://serde.rs
+[TOML]: https://toml.io
 [Typst]: https://typst.app
 [Typst Core]: https://github.com/typst/typst
 [Time]: https://github.com/time-rs/time
@@ -346,4 +350,5 @@ but are recognized by at least one UN member.
 [Web-sys]: https://rustwasm.github.io/wasm-bindgen/web-sys/index.html
 [Wasmi]: https://github.com/wasmi-labs/wasmi
 [WasmTime]: https://github.com/bytecodealliance/wasmtime
+[YAML]: https://yaml.org
 [yellow labs]: https://yellowlab.tools
