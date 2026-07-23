@@ -105,9 +105,7 @@
             rustToolchain
             unzip
           ];
-          webNativeBuildInputs = [
-            wasm-bindgen-cli # pkgs.esbuild
-          ];
+          webNativeBuildInputs = [ wasm-bindgen-cli ];
           commonBuildInputs = [
             pkgs.openssl
           ]
@@ -205,11 +203,11 @@
             let
               target =
                 if platform == "web" then
-                  "target/dx/log-out/release/${platform}/public/*"
+                  "target/dx/${env.projectName}/release/${platform}/public/*"
                 else if platform == "server" then
-                  "target/dx/log-out/release/web/*" # Server bin plus assets
+                  "target/dx/${env.projectName}/release/web/*" # Server bin plus assets
                 else
-                  "target/dx/log-out/release/${platform}/*";
+                  "target/dx/${env.projectName}/release/${platform}/*";
               out =
                 if platform == "server" then
                   "$out/bin/" # \n
@@ -508,7 +506,7 @@
             buildPhase = ''
               export HOME=$TMPDIR
               mkdir -p $out
-              cargo llvm-cov nextest --bin log-out \
+              cargo llvm-cov nextest --bin ${env.projectName} \
                 --ignore-filename-regex "(src/components/|\.cargo/registry/|nix/store)" \
                 --html --output-dir $out 2>&1 | tee $out/nextest.log
               cargo llvm-cov report \
